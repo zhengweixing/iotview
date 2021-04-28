@@ -37,9 +37,6 @@ function baseProp(id, title, opts) {
         }
 
         this.create(div, value, title, opts);
-        if (opts.help) {
-            div.innerHTML += '<a href="/resources/help_zh.html#' + opts.help + '" target="_blank"  class="help_link">?</a>';
-        }
         container.appendChild(div);
     }
 }
@@ -209,7 +206,12 @@ function BasePropView(container, graph, cell) {
         var prop = this.props[i];
         var subtitle = document.createElement("div");
         subtitle.className = "subtitle";
-        subtitle.innerHTML = prop.title;
+        console.log(prop);
+        if (prop.help) {
+            subtitle.innerHTML = prop.title + '<span class="glyphicon glyphicon-search"></span><a href="/resources/help_zh.html#' + prop.help + '" target="_blank"  class="help_link">?</a>';
+        } else{
+            subtitle.innerHTML = prop.title;
+        }
         container.appendChild(subtitle);
         for (var idx = 0; idx < prop.items.length; idx++) {
             var item = prop.items[idx];
@@ -278,32 +280,34 @@ MqttPropView.prototype.initProp = function () {
     this.props = [
         {
             title: "MQTT参数",
+            help: "mqtt",
             items: [
-                new inputProp(mxConstants.STYLE_MQTT_HOST, "服务器地址", {help: "mqtt", default: "127.0.0.1"}),
-                new inputProp(mxConstants.STYLE_MQTT_PORT, "端口", {help: "mqtt", default: "8083"}),
-                new inputProp(mxConstants.STYLE_MQTT_USERNAME, "用户名", {help: "mqtt"}),
-                new inputProp(mxConstants.STYLE_MQTT_PASSWORD, "密码", {help: "mqtt"}),
-                new inputProp(mxConstants.STYLE_MQTT_KEEPALIVE, "心跳", {help: "mqtt", default: "60"}),
-                new inputProp(mxConstants.STYLE_MQTT_TIMEOUT, "超时", {help: "mqtt", default: "10"}),
-                new checkBoxProp(mxConstants.STYLE_MQTT_SSL, "SSL", {help: "mqtt", default: "false"}),
-                new checkBoxProp(mxConstants.STYLE_MQTT_SESSION, "清除会话", {help: "mqtt", default: "true"}),
-                new inputProp(mxConstants.STYLE_MQTT_TOPICS, "订阅主题", {help: "mqtt"})
+                new inputProp(mxConstants.STYLE_MQTT_HOST, "服务器地址", {default: "127.0.0.1"}),
+                new inputProp(mxConstants.STYLE_MQTT_PORT, "端口", {default: "8083"}),
+                new inputProp(mxConstants.STYLE_MQTT_USERNAME, "用户名", {}),
+                new inputProp(mxConstants.STYLE_MQTT_PASSWORD, "密码", {}),
+                new inputProp(mxConstants.STYLE_MQTT_KEEPALIVE, "心跳", {default: "60"}),
+                new inputProp(mxConstants.STYLE_MQTT_TIMEOUT, "超时", {default: "10"}),
+                new checkBoxProp(mxConstants.STYLE_MQTT_SSL, "SSL", {default: "false"}),
+                new checkBoxProp(mxConstants.STYLE_MQTT_SESSION, "清除会话", {default: "true"}),
+                new inputProp(mxConstants.STYLE_MQTT_TOPICS, "订阅主题", {})
             ]
         },
         {
-            title: "连接/断开图形",
+            title: "连接/断开状态",
+            help: "status",
             items: [
-                new checkBoxProp(mxConstants.STYLE_VISIBLE, "是否可见", {help: "mqtt", default: "true"}),
-                new inputProp(mxConstants.STYLE_MQTT_OFFIMG, "未连接", {help: "mqtt", default: "/shapes/1/20.png"}),
-                new inputProp(mxConstants.STYLE_MQTT_ONIMG, "已连接", {help: "mqtt", default: "/shapes/1/14.png"})
+                new checkBoxProp(mxConstants.STYLE_VISIBLE, "是否可见", {default: "true"}),
+                new inputProp(mxConstants.STYLE_MQTT_OFFIMG, "未连接", {default: "shapes/1/20.png"}),
+                new inputProp(mxConstants.STYLE_MQTT_ONIMG, "已连接", {default: "shapes/1/14.png"})
             ]
         },
         {
             title: "事件",
+            help: "doFormat",
             items: [
                 new textareaProp(mxConstants.STYLE_FORMAT, "消息格式化", 10, {
                     type: "base64",
-                    help: "doFormat",
                     default: doFormat.toString()
                 })
             ]
@@ -338,16 +342,15 @@ ShapePropView.prototype.initProp = function () {
     this.props = [
         {
             title: "数据绑定",
+            help: "dataSource",
             items: [
-                new selectProp(mxConstants.STYLE_DATASOURCE, "数据源", {items: dataSource, help: "dataSource"}),
+                new selectProp(mxConstants.STYLE_DATASOURCE, "数据源", {items: dataSource}),
                 new textareaProp(mxConstants.STYLE_ONMSGARRIVED, "消息处理", 10, {
                     type: "base64",
-                    help: "onMsgArrived",
                     default: doMsg.toString()
                 }),
                 new textareaProp(mxConstants.STYLE_ONCLICK, "单击事件", 10, {
                     type: "base64",
-                    help: "onClick",
                     default: doClick.toString()
                 })
             ]
@@ -373,9 +376,10 @@ TimerPropView.prototype.initProp = function () {
     this.props = [
         {
             title: "高级配置",
+            help: "timer",
             items: [
-                new checkBoxProp(mxConstants.STYLE_VISIBLE, "是否可见", {help: "visible", default: "true"}),
-                new inputProp(mxConstants.STYLE_TIMER_FREQ, "周期", {help: "timer", default: "1000"})
+                new checkBoxProp(mxConstants.STYLE_VISIBLE, "是否可见", { default: "true"}),
+                new inputProp(mxConstants.STYLE_TIMER_FREQ, "周期", { default: "1000"})
             ]
         }
     ];
@@ -402,12 +406,12 @@ echartPropView.prototype.initProp = function () {
     this.props = this.props.concat([
         {
             title: "EChart配置",
+            help: "echart/script",
             items: [
-                new checkBoxProp(mxConstants.STYLE_ECHART_GL, "是否引入GL", {help: "echart-gl", default: "true"}),
+                new checkBoxProp(mxConstants.STYLE_ECHART_GL, "是否引入GL", {default: "false"}),
                 new textareaProp(mxConstants.STYLE_ECHART_SCRIPT, "脚本", 10, {
                     type: "base64",
-                    help: "echart/script",
-                    default: ''
+                    default: getEChart()
                 })
             ]
         }

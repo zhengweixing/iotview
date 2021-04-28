@@ -48,20 +48,19 @@ Sidebar.prototype.addImagePalette = function (id, title, prefix, postfix, items,
 
 // 扩展图形
 Sidebar.prototype.addExtShapes = function () {
-
     var fns =[
         this.createEdgeTemplateEntry('shape=animConnector;html=1;', 50, 50, '', 'animation Connector', null, 'animation directional'),
-        this.createVertexTemplateEntry('shape=dateTimeText;html=1', 120, 60, '', 'dateTimeText', null, null, 'datetime text'),
-        this.createVertexTemplateEntry('shape=echartBox;html=1;strokeColor=#c0c0c0;fillColor=#ffffff;overflow=fill;rounded=0;', 280, 160, 'EChart', 'EChart')
+        this.createVertexTemplateEntry('shape=dateTimeText;html=1', 120, 60, '', 'dateTimer', null, null, 'datetimer'),
     ];
     this.addPaletteFunctions('extShapes', '扩展图形', false, fns);
 
     var style = 'html=1;image=lib/grapheditor/stencils/clipart/Gear_128x128.png;fontColor=none;align=center;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;';
     var fns = [
         this.createVertexTemplateEntry('shape=timer;' + style, this.defaultImageWidth, this.defaultImageHeight, 'Timer', "Timer Adapter", true, null, null),
-        this.createVertexTemplateEntry('shape=mqtt;' + style, this.defaultImageWidth, this.defaultImageHeight, 'MQTT', "MQTT Adapter", true, null, null)
+        this.createVertexTemplateEntry('shape=mqtt;' + style, this.defaultImageWidth, this.defaultImageHeight, 'MQTT', "MQTT Adapter", true, null, null),
+        this.createVertexTemplateEntry('shape=http;' + style, this.defaultImageWidth, this.defaultImageHeight, 'HTTP', "HTTP Adapter", true, null, null)
     ];
-    this.addPaletteFunctions('Adapter', '适配器', false, fns);
+    this.addPaletteFunctions('Adapter', '数据适配器', false, fns);
 }
 
 //扩展其它图形
@@ -83,7 +82,6 @@ Sidebar.prototype.addImageShapes = function () {
             titles: titles
         };
     }
-
     for (j = 0; j < shapes.length; j++) {
         var item = shapes[j];
         var title = item.title;
@@ -93,10 +91,19 @@ Sidebar.prototype.addImageShapes = function () {
     }
 }
 
+// echart图形
+Sidebar.prototype.addEchartShapes = function () {
+    var fns =[
+        this.createVertexTemplateEntry('shape=echartBox;html=1;strokeColor=#c0c0c0;fillColor=#ffffff;overflow=fill;rounded=0;', 280, 160, 'EChart', 'EChart')
+    ];
+    this.addPaletteFunctions('echart', '图表', false, fns);
+}
+
 Sidebar.prototype.oldInit = Sidebar.prototype.init;
 Sidebar.prototype.init = function () {
     this.oldInit();
     this.addExtShapes();
+    this.addEchartShapes();
     this.addImageShapes();
 }
 

@@ -25,7 +25,6 @@ mxConstants.STYLE_TIMER_FREQ = "freq";
 mxConstants.STYLE_ECHART_SCRIPT = "script";
 mxConstants.STYLE_ECHART_GL = "gl";
 
-
 Date.prototype.format = function (fmt) {
     var o = {
         "M+": this.getMonth() + 1, //月份
@@ -65,15 +64,13 @@ var doTimer = function (timer) {
 
 // 单击事件
 var doClick = function (event) {
-    if(!this.onimg){
-        // 设置开的图片
-        this.onimg = '/shapes/18/50.png'
-    }
-    if(!this.offimg){
-        this.offimg = this.getStyle(mxConstants.STYLE_IMAGE, null);
-    }
-    var path = !this.status  ? this.onimg : this.offimg;
-    this.status = !this.status;
-    this.setStyle(mxConstants.STYLE_IMAGE, path);
+    console.log(this.id, event);
 }
 
+
+// echart脚本
+var getEChart = function () {
+    return '//参考echart示例：https://echarts.apache.org/examples/zh/index.html\r\n' +
+           'option = [];\r\n' +
+           'this.chart.setOption(option);';
+}

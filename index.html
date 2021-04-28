@@ -6,7 +6,8 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="lib/grapheditor/styles/grapheditor.css">
-    <script type="text/javascript" src="js/Config.js"></script>
+	<script type="text/javascript" src="lib/jquery/jquery.js"></script>
+    <script type="text/javascript" src="js/Init.js"></script>
 	<script type="text/javascript" src="lib/grapheditor/js/Init.js"></script>
 	<script type="text/javascript" src="lib/grapheditor/deflate/pako.min.js"></script>
 	<script type="text/javascript" src="lib/grapheditor/deflate/base64.js"></script>
@@ -26,9 +27,8 @@
 
     <script type="text/javascript" src="js/App.js"></script>
 	<script type="text/javascript" src="js/MyShapes.js"></script>
+	<script type="text/javascript" src="js/EChartShapes.js"></script>
 	<script type="text/javascript" src="js/MxGraphExt.js"></script>
-
-	<script type="text/javascript" src="lib/jquery/jquery.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <style type="text/css">
@@ -42,7 +42,7 @@
 		(function()
 		{
 			var editorUiInit = EditorUi.prototype.init;
-			
+
 			EditorUi.prototype.init = function()
 			{
 				editorUiInit.apply(this, arguments);
@@ -62,7 +62,7 @@
 					}));
 				}
 			};
-			
+
 			// Adds required resources (disables loading of fallback properties, this can only
 			// be used if we know that all keys are defined in the language specific file)
 			mxResources.loadDefaultBundle = false;
@@ -74,11 +74,11 @@
 			{
 				// Adds bundle text to resources
 				mxResources.parse(xhr[0].getText());
-				
+
 				// Configures the default graph theme
 				var themes = new Object();
-				themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement(); 
-				
+				themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement();
+
 				// Main
 				new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
 			}, function()

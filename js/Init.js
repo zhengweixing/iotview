@@ -41,3 +41,17 @@ var loopCell = function(Graph, Do){
     }
     loop(Graph.model.root);
 }
+
+function getScript(Paths, callback){
+    var Load = function (Idx) {
+        var path = Paths[Idx];
+        $.getScript(path, function () {
+            if(Paths.length > Idx + 1){
+                Load(Idx + 1)
+            }else{
+                callback()
+            }
+        });
+    }
+    Load(0);
+}

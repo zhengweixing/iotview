@@ -1,18 +1,3 @@
-function getScript(Paths, callback){
-    var Load = function (Idx) {
-        var path = Paths[Idx];
-        $.getScript(path, function () {
-            if(Paths.length > Idx + 1){
-                Load(Idx + 1)
-            }else{
-                callback()
-            }
-        });
-    }
-    Load(0);
-}
-
-
 // 自定义图形
 
 // 流动箭头
@@ -62,66 +47,6 @@ dateTimeText.prototype.init = function (container) {
         }, 1000);
     }
 }
-
-
-// echartjs控件
-
-function echartBox(bounds, fill, stroke, strokewidth) {
-    mxRectangleShape.call(this, bounds, fill, stroke, strokewidth);
-}
-
-mxUtils.extend(echartBox, mxRectangleShape);
-
-mxCellRenderer.registerShape('echartBox', echartBox);
-
-
-echartBox.prototype.init = function (container) {
-
-    mxRectangleShape.prototype.init.apply(this, arguments);
-
-    var adapter = this.state.cell.adapter;
-    if(adapter){
-
-        var id = 'chart_' + mxUtils.getValue(this.style, mxConstants.STYLE_ID, new Date().getTime());
-        this.state.cell.setValue('<div id="' + id + '"></div>');
-
-        var box = document.createElement('div');
-        box.style.width = this.state.width + 'px';
-        box.style.height = this.state.height + 'px';
-        adapter.box = box;
-
-        var self = this;
-
-        var scripts = ["lib/echarts/echarts.min.js"];
-        if(mxUtils.getValue(self.style, mxConstants.STYLE_ECHART_GL, false)){
-            scripts.push("lib/echarts/echarts-gl.min.js");
-        }
-        getScript(scripts,function () {
-
-            var chart = echarts.init(box);
-            adapter.chart = chart;
-            var timer = setInterval(function () {
-                var main = document.getElementById(id);
-                if (main) {
-                    clearInterval(timer);
-                    main.appendChild(box);
-                }
-            }, 1);
-            self.run();
-
-        });
-    }
-}
-
-echartBox.prototype.run = function () {
-    var code = mxUtils.getValue(this.style, mxConstants.STYLE_ECHART_SCRIPT, null);
-    if (code) {
-        code = Base64.decode(code);
-        var adapter = this.state.cell.adapter;
-        eval(code);
-    }
-}
-
 
 // 适配器控件
 function dataShape() {
@@ -195,9 +120,7 @@ BaseAdapter.prototype.refresh = function () {
 // 扩展 mxShape
 mxShape.prototype.old_init = mxShape.prototype.init;
 mxShape.prototype.init = function (container) {
-
     this.old_init(container);
-
     var view = this.state && this.state.view;
     if(view){
         var graph = view.graph;
@@ -211,7 +134,6 @@ mxShape.prototype.init = function (container) {
             }
         }
     }
-
 }
 
 
@@ -219,7 +141,6 @@ mxShape.prototype.init = function (container) {
 function dataAdapter(graph, cell) {
 
     BaseAdapter.call(this, graph, cell);
-
     var state = this.graph.view.getState(this.cell);
     //是否可见
     if (this.graph.isView) {
@@ -228,7 +149,6 @@ function dataAdapter(graph, cell) {
             state.shape.node.setAttribute('display', 'none');
         }
     }
-
     var code = this.getStyle(mxConstants.STYLE_FORMAT, '');
     if (code.length > 0) {
         code = Base64.decode(code);
@@ -310,7 +230,6 @@ function mqttAdapter(graph, cell) {
 }
 
 mqttAdapter.prototype = Object.create(dataAdapter.prototype);
-
 registerAdapter('mqtt', mqttAdapter);
 
 
@@ -369,6 +288,16 @@ timerAdapter.prototype.stop = function () {
 }
 
 
+
+// http 适配器
+function httpAdapter(graph, cell) {
+    dataAdapter.call(this, graph, cell);
+}
+httpAdapter.prototype = Object.create(dataAdapter.prototype);
+registerAdapter('http', httpAdapter);
+
+
+mxCellRenderer.registerShape('http', dataShape);
 mxCellRenderer.registerShape('mqtt', dataShape);
 mxCellRenderer.registerShape('timer', dataShape);
 
