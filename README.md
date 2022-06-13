@@ -9,6 +9,4 @@
 
 http://view.ashufa.com
 
-<img width="1436" alt="image" src="https://user-images.githubusercontent.com/7452152/173210408-89fe10a2-55d1-49c1-9508-d7d67bfe69f2.png">
-
-![image](https://user-images.githubusercontent.com/7452152/173294337-bc15f7b8-d7c0-4e86-aa92-e759bec0d04d.png)
+![image](https://user-images.githubusercontent.com/7452152/173294573-21eb56f5-1798-4403-af85-81c6f34b21a7.png)
