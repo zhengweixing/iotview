@@ -15,4 +15,4 @@
 ## 体验地址
 
 - http://view.ashufa.com
-- Tel: 15899912449
+- http://iot.ashufa.com
