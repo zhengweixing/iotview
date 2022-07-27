@@ -54,9 +54,6 @@
         var xmlDoc = mxUtils.parseXml(data);
         var codec = new mxCodec(xmlDoc);
         var model = graph.getModel();
-        // graph.container.style.backgroundColor = "red";
-        // graph.container.style.backgroundImage = model.background
-
         codec.decode(xmlDoc.documentElement, model);
     }
 

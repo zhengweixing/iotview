@@ -118,6 +118,7 @@ Actions.prototype.init = function () {
     var editor = ui.editor;
     var graph = editor.graph;
     this.addAction('Preview', function () {
+        console.log('Preview');
         var view = mxUtils.getPrettyXml(editor.getGraphXml());
         graph.openLink('viewer.html?xml=' + Base64.encode(view));
     });
@@ -141,45 +142,53 @@ Menus.prototype.init = function () {
 
 
 // 扩展format
-TextFormatPanel.prototype.oldInit = TextFormatPanel.prototype.init
+TextFormatPanel.prototype.parentInit = TextFormatPanel.prototype.init
 TextFormatPanel.prototype.init = function () {
 
-    this.oldInit();
+    this.parentInit();
+    var ui = this.editorUi;
+    var editor = ui.editor;
+    var graph = editor.graph;
+    var container = this.container;
+
+    var iframe = document.createElement('iframe');
+    iframe.src = 'bind.html';
+    iframe.style.borderWidth = '0px';
+    iframe.scrolling = 'no';
+    window.graph = graph;
+    window.setData = function (cells) {
+        console.log(cells);
+    }
+    window.onshow = function(){
+        console.log('11111');
+        iframe.height = iframe.contentWindow.document.documentElement.scrollHeight;
+    }
+    container.appendChild(iframe);
 
     // 增加Shape数据绑定, 选择一个时显示
-    var ui = this.editorUi;
-    if (ui.editor.graph.getSelectionCount() == 1) {
-
-        var graph = this.editorUi.editor.graph;
-        var title = mxResources.get('advanced');
-        title = title ? title : 'Advanced';
-        var btn = mxUtils.button(title, mxUtils.bind(this, function (evt) {
-            window.openNew = false;
-            window.graph = graph;
-            window.openFile = new OpenFile(mxUtils.bind(this, function () {
-                ui.hideDialog();
-            }));
-            window.openFile.setConsumer(mxUtils.bind(this, function (cells) {
-                // console.log(cells);
-            }));
-            ui.showDialog(new OpenDialog2("bind.html").container, 650, 500, true, true, function () {
-                window.openFile = null;
-                window.graph = null;
-            }, undefined, undefined, undefined, true);
-        }));
-
-        btn.style.width = '202px';
-        btn.style.marginBottom = '2px';
-        var div = this.createPanel();
-        div.appendChild(btn);
-        this.container.appendChild(div);
-    }
+    // if (graph.getSelectionCount() == 1) {
+    //
+    //     var title = mxResources.get('advanced');
+    //     title = title ? title : 'advance';
+    //     var btn = mxUtils.button(title, mxUtils.bind(this, function (evt) {
+    //         window.openNew = false;
+    //         window.graph = graph;
+    //         window.openFile = new OpenFile(mxUtils.bind(this, function () {
+    //             ui.hideDialog();
+    //         }));
+    //         window.openFile.setConsumer(mxUtils.bind(this, function (cells) {
+    //             // console.log(cells);
+    //         }));
+    //         ui.showDialog(new OpenDialog2("bind.html").container, 650, 500, true, true, function () {
+    //             window.openFile = null;
+    //             window.graph = null;
+    //         }, undefined, undefined, undefined, true);
+    //     }));
+    //
+    //     btn.style.width = '202px';
+    //     btn.style.marginBottom = '2px';
+    //     var div = this.createPanel();
+    //     div.appendChild(btn);
+    //     container.appendChild(div);
+    // }
 }
-
-
-
-
-
-
-
-

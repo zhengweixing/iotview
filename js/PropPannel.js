@@ -169,7 +169,7 @@ var propRender = {
             form.onsubmit = function () {
                 try {
                     prop.onSubmit();
-                    window.parent.openFile.setData(cell);
+                    window.parent.setData(cell);
                     return true;
                 } catch (Err) {
                     mxUtils.alert("Error: " + Err);
@@ -282,7 +282,7 @@ MqttPropView.prototype.initProp = function () {
             title: "MQTT参数",
             help: "mqtt",
             items: [
-                new inputProp(mxConstants.STYLE_MQTT_HOST, "服务器地址", {default: "127.0.0.1"}),
+                new inputProp(mxConstants.STYLE_MQTT_HOST, "服务器", {default: "127.0.0.1"}),
                 new inputProp(mxConstants.STYLE_MQTT_PORT, "端口", {default: "8083"}),
                 new inputProp(mxConstants.STYLE_MQTT_USERNAME, "用户名", {}),
                 new inputProp(mxConstants.STYLE_MQTT_PASSWORD, "密码", {}),
@@ -344,7 +344,7 @@ ShapePropView.prototype.initProp = function () {
             title: "数据绑定",
             help: "dataSource",
             items: [
-                new selectProp(mxConstants.STYLE_DATASOURCE, "数据源", {items: dataSource}),
+                new selectProp(mxConstants.STYLE_DATASOURCE, "适配器", {items: dataSource}),
                 new textareaProp(mxConstants.STYLE_ONMSGARRIVED, "消息处理", 10, {
                     type: "base64",
                     default: doMsg.toString()

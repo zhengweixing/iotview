@@ -14,27 +14,15 @@
 
 <script type="text/javascript">
 
-    function hideWindow(cancel) {
-        window.parent.openFile.cancel(cancel);
-    }
-
     function main() {
         var openButton = document.getElementById('button');
         openButton.value = window.parent.mxResources.get('apply');
-        var cancelButton = document.getElementById('cancel');
-        cancelButton.value = window.parent.mxResources.get('cancel');
         var graph = window.parent.graph;
         propRender.init(graph);
+        window.parent.onshow();
     };
 </script>
 <style type="text/css">
-
-    .title {
-        margin: 12px 0px;
-        padding-bottom: 5px;
-        font-size: 20px;
-        border-bottom: 1px solid silver;
-    }
 
     .subtitle {
         margin: 8px 0px;
@@ -47,20 +35,14 @@
         height: 100%;
     }
 
-    .row {
-        margin: 10px 5px;
-    }
-
     .code {
         border: 1px solid silver;
         padding: 5px;
     }
 
     .geBtn {
-        font-size: 16px;
-        padding: 5px 21px;
-        float: right;
-        margin-left: 5px;
+        padding: 5px 15px;
+        margin-top: 5px;
     }
 
     .gePrimaryBtn {
@@ -89,7 +71,7 @@
 
     .input-box input, .input-box select {
         width: 73%;
-        height:40px;
+        height:35px;
         display: inline-block;
         border-width: 0px;
     }
@@ -110,21 +92,26 @@
         margin: 5px;
         color: #4279bd;
     }
+    body {
+        margin:0px;
+        font-weight:bold;
+        font-size:12px;
+    }
+    #mainBox{
+        color: rgb(112, 112, 112);
+        padding:0px 8px 0px 8px;
+    }
 
 </style>
 <body onload="main();">
-<div class="title">高级设置</div>
 <div id="mainBox">
     <form method="POST" action="" id="propForm">
-        <div style="overflow:hidden;">
-            <div id="propBox" class="row propBox">
+        <div id="propBox" class="row propBox">
 
-            </div>
-            <div class="row">
-                <input type="submit" id="button" class="geBtn gePrimaryBtn" value="Apply">
-                <input type="button" id="cancel" class="geBtn" value="Cancel" onclick="hideWindow(true);">
-                <br style="clear:both;"/>
-            </div>
+        </div>
+        <div>
+            <input type="submit" id="button" class="geBtn gePrimaryBtn" value="Apply">
+            <br style="clear:both;"/>
         </div>
     </form>
 </div>
