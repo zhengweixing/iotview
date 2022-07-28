@@ -23,6 +23,31 @@ animConnector.prototype.paintEdgeShape = function (c, pts) {
 
 }
 
+// 流动直线
+function animLine(points, stroke, strokewidth) {
+    mxPolyline.call(this, points, stroke, strokewidth);
+}
+
+mxUtils.extend(animLine, mxPolyline);
+
+mxCellRenderer.registerShape('animLine', animLine);
+
+animLine.prototype.paintEdgeShape = function (c, pts) {
+
+    console.log('line');
+    mxPolyline.prototype.paintEdgeShape.apply(this, arguments);
+
+    var path0 = this.node.getElementsByTagName('path')[0];
+    var path1 = this.node.getElementsByTagName('path')[1];
+    path0.removeAttribute('visibility');
+    path0.setAttribute('stroke-width', '6');
+    path0.setAttribute('stroke', 'lightGray');
+    path1 && path1.setAttribute('class', 'flow');
+
+}
+
+
+
 // 时间显示控件
 
 function dateTimeText(bounds, fill, stroke, strokewidth) {

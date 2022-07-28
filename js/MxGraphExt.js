@@ -49,6 +49,7 @@ Sidebar.prototype.addImagePalette = function (id, title, prefix, postfix, items,
 // 扩展图形
 Sidebar.prototype.addExtShapes = function () {
     var fns =[
+        this.createEdgeTemplateEntry('shape=animLine;html=1;', 50, 50, '', 'animation Connector', null, 'animation directional'),
         this.createEdgeTemplateEntry('shape=animConnector;html=1;', 50, 50, '', 'animation Connector', null, 'animation directional'),
         this.createVertexTemplateEntry('shape=dateTimeText;html=1', 120, 60, '', 'dateTimer', null, null, 'datetimer'),
     ];

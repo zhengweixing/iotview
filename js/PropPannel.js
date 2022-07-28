@@ -106,8 +106,8 @@ textareaProp.prototype.create = function (div, value, title, opts) {
     var html =
         '<div class="input-box ' + opts.className + '">' +
         '  <div style="border-width: 0px;width:100%; padding-top:8px; padding-bottom:8px;" class="input-span">' + title + '</div>' +
-        '  <div style="padding:10px 15px 10px 10px;">' +
-        '    <textarea  rows="' + this.rows + '" id="' + this.id + '" placeholder="请输入' + title + '">' + value + '</textarea>' +
+        '  <div style="padding:5px 10px 5px 5px;">' +
+        '    <textarea style="border-color:#b4adad;"  rows="' + this.rows + '" id="' + this.id + '" placeholder="请输入' + title + '">' + value + '</textarea>' +
         '  </div>' +
         '</div>';
     div.innerHTML = html;
