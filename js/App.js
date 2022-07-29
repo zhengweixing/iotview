@@ -45,12 +45,14 @@ Date.prototype.format = function (fmt) {
 
 // 消息格式化函数
 var doFormat = function (Message){
-    return JSON.parse(Message.payloadString);
+    var msg = JSON.parse(Message.payloadString);
+    console.log(msg);
+    return msg;
 }
 
 // 消息处理函数
 var doMsg = function(Message){
-    if(Message.addr == this.id){
+    if(Message.id == this.id){
         this.setValue(Message.value);
         this.refresh();
     }
