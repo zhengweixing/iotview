@@ -161,12 +161,12 @@ TextFormatPanel.prototype.init = function () {
         console.log(cells);
     }
     window.onshow = function(){
-        console.log('11111');
-        iframe.height = iframe.contentWindow.document.documentElement.scrollHeight;
+        var height = iframe.contentWindow.document.documentElement.scrollHeight;
+        iframe.height = height == 0 ? 600 : height;
     }
     container.appendChild(iframe);
 
-    // 增加Shape数据绑定, 选择一个时显示
+    // // 增加Shape数据绑定, 选择一个时显示
     // if (graph.getSelectionCount() == 1) {
     //
     //     var title = mxResources.get('advanced');
