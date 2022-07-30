@@ -119,7 +119,6 @@ Actions.prototype.init = function () {
     var editor = ui.editor;
     var graph = editor.graph;
     this.addAction('Preview', function () {
-        console.log('Preview');
         var view = mxUtils.getPrettyXml(editor.getGraphXml());
         graph.openLink('viewer.html?xml=' + Base64.encode(view));
     });
