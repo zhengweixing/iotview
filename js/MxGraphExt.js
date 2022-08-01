@@ -123,7 +123,6 @@ Actions.prototype.init = function () {
         graph.openLink('viewer.html?xml=' + Base64.encode(view));
     });
 
-
     this.put('about', new Action(mxResources.get('about'), function () {
         ui.showDialog(new OpenDialog2(RESOURCES_PATH + "/about_" + mxClient.language + ".html").container, 350, 300, true, true, function () {
         }, undefined, undefined, undefined, true);
@@ -136,7 +135,7 @@ Menus.prototype.oldInit = Menus.prototype.init;
 Menus.prototype.init = function () {
     this.oldInit();
     this.put('file', new Menu(mxUtils.bind(this, function (menu, parent) {
-        this.addMenuItems(menu, ['Preview', 'new', 'open', '-', 'save', 'saveAs', '-', 'import', 'export', '-', 'pageSetup', 'print'], parent);
+        this.addMenuItems(menu, ['Preview', '-', 'save', 'saveAs', '-', 'import', 'export', '-', 'print'], parent);
     })));
 }
 
