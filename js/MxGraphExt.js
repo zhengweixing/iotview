@@ -118,7 +118,7 @@ Actions.prototype.init = function () {
     var ui = this.editorUi;
     var editor = ui.editor;
     var graph = editor.graph;
-    this.addAction('Preview', function () {
+    this.addAction('preview', function () {
         var view = mxUtils.getPrettyXml(editor.getGraphXml());
         graph.openLink('viewer.html?xml=' + Base64.encode(view));
     });
@@ -128,6 +128,16 @@ Actions.prototype.init = function () {
         }, undefined, undefined, undefined, true);
     }));
 
+    this.put('publish', new Action(mxResources.get('publish'), function () {
+        console.log('publish');
+        var view = mxUtils.getPrettyXml(editor.getGraphXml());
+        try{
+            window.setData(view);
+        }catch(err){
+            alert(err);
+        }
+    }));
+
 };
 
 // 菜单扩展
@@ -135,7 +145,7 @@ Menus.prototype.oldInit = Menus.prototype.init;
 Menus.prototype.init = function () {
     this.oldInit();
     this.put('file', new Menu(mxUtils.bind(this, function (menu, parent) {
-        this.addMenuItems(menu, ['Preview', '-', 'save', 'saveAs', '-', 'import', 'export', '-', 'print'], parent);
+        this.addMenuItems(menu, ['preview', '-', 'publish', '-', 'import', 'export'], parent);
     })));
 }
 
