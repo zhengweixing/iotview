@@ -132,7 +132,7 @@ Actions.prototype.init = function () {
         console.log('publish');
         var view = mxUtils.getPrettyXml(editor.getGraphXml());
         try{
-            window.setData(view);
+            window.publish(view);
         }catch(err){
             alert(err);
         }
