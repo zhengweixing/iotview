@@ -130,9 +130,9 @@ Actions.prototype.init = function () {
 
     this.put('publish', new Action(mxResources.get('publish'), function () {
         console.log('publish');
-        var view = mxUtils.getPrettyXml(editor.getGraphXml());
         try{
-            window.parent.postMessage(view, "*");
+            var view = mxUtils.getPrettyXml(editor.getGraphXml());
+            window.parent.postMessage({ type : 'view', view : view }, "*");
         }catch(err){
             alert(err);
         }

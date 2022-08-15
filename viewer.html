@@ -49,6 +49,7 @@
     <div id="graphContainer"></div>
 </div>
 <script type="text/javascript">
+
     function show(data) {
         console.log(data)
         var xmlDoc = mxUtils.parseXml(data);
@@ -69,6 +70,14 @@
             document.getElementById('import').style.display="block";
         }
     };
+
+    window.addEventListener("message", (e) => {
+        var data= e.data;
+        if(data.type == 'view') {
+             var view = data.view;
+             show(data);
+        }
+    });
 </script>
 </body>
 </html>
