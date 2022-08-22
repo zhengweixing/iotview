@@ -67,7 +67,7 @@
         if(xml){
             show(Base64.decode(xml))
         }else{
-            document.getElementById('import').style.display="block";
+            // document.getElementById('import').style.display="block";
         }
     };
 
@@ -77,7 +77,7 @@
         data = JSON.parse(data);
         if(data.type == 'view') {
              var view = data.view;
-             show(data);
+             show(view);
         }
     });
     window.parent.postMessage({ type : 'view', event : 'done' }, "*");
