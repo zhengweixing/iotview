@@ -173,31 +173,69 @@ TextFormatPanel.prototype.init = function () {
         iframe.height = height == 0 ? 600 : height;
     }
     container.appendChild(iframe);
-
-    // // 增加Shape数据绑定, 选择一个时显示
-    // if (graph.getSelectionCount() == 1) {
-    //
-    //     var title = mxResources.get('advanced');
-    //     title = title ? title : 'advance';
-    //     var btn = mxUtils.button(title, mxUtils.bind(this, function (evt) {
-    //         window.openNew = false;
-    //         window.graph = graph;
-    //         window.openFile = new OpenFile(mxUtils.bind(this, function () {
-    //             ui.hideDialog();
-    //         }));
-    //         window.openFile.setConsumer(mxUtils.bind(this, function (cells) {
-    //             // console.log(cells);
-    //         }));
-    //         ui.showDialog(new OpenDialog2("bind.html").container, 650, 500, true, true, function () {
-    //             window.openFile = null;
-    //             window.graph = null;
-    //         }, undefined, undefined, undefined, true);
-    //     }));
-    //
-    //     btn.style.width = '202px';
-    //     btn.style.marginBottom = '2px';
-    //     var div = this.createPanel();
-    //     div.appendChild(btn);
-    //     container.appendChild(div);
-    // }
 }
+
+EditorUi.prototype.showImageDialog = function(title, value, fn, ignoreExisting)
+{
+    var cellEditor = this.editor.graph.cellEditor;
+    var selState = cellEditor.saveSelection();
+
+    var editor = this.editor;
+    window.graph = editor.graph;
+    var ui = this;
+    window.openFile = new OpenFile(mxUtils.bind(this, function (newValue) {
+        ui.hideDialog();
+        cellEditor.restoreSelection(selState);
+        if (newValue != null && newValue.length > 0) {
+            var img = new Image();
+            img.onload = function() {
+                fn(newValue, img.width, img.height);
+            };
+            img.onerror = function(){
+                fn(null);
+                mxUtils.alert(mxResources.get('fileNotFound'));
+            };
+            img.src = newValue;
+        } else {
+            fn(null);
+        }
+    }));
+    ui.showDialog(new OpenDialog2("images.html").container, 650, 500, true, true, function () {
+        window.openFile = null;
+        window.graph = null;
+    }, undefined, undefined, undefined, true);
+};
+
+
+EditorUi.prototype.showBackgroundImageDialog = function(apply)
+{
+    apply = (apply != null) ? apply : mxUtils.bind(this, function(image) {
+        var change = new ChangePageSetup(this, null, image);
+        change.ignoreColor = true;
+        this.editor.graph.model.execute(change);
+    });
+    var ui = this;
+    window.openFile = new OpenFile(mxUtils.bind(this, function (newValue) {
+        ui.hideDialog();
+        if (newValue != null && newValue.length > 0) {
+            var img = new Image();
+            var editor = this.editor;
+            img.onload = function() {
+                var width = editor.graph.pageFormat.width;
+                var height = editor.graph.pageFormat.height;
+                apply(new mxImage(newValue, width, height));
+            };
+            img.onerror = function() {
+                apply(null);
+                mxUtils.alert(mxResources.get('fileNotFound'));
+            };
+            img.src = newValue;
+        } else {
+            apply(null);
+        }
+    }));
+    ui.showDialog(new OpenDialog2("images.html").container, 650, 500, true, true, function () {
+        window.openFile = null;
+        window.graph = null;
+    }, undefined, undefined, undefined, true);
+};

@@ -38,17 +38,19 @@
 </head>
 <body class="geEditor">
 	<script type="text/javascript">
+
 		// Extends EditorUi to update I/O action states based on availability of backend
 		(function()
 		{
+			var editorUI;
 			var editorUiInit = EditorUi.prototype.init;
 
-			EditorUi.prototype.init = function()
-			{
+			EditorUi.prototype.init = function() {
 				editorUiInit.apply(this, arguments);
 				this.actions.get('export').setEnabled(false);
 
 				// Updates action states which require a backend
+
 				if (!Editor.useLocalStorage)
 				{
 					mxUtils.post(OPEN_URL, '', mxUtils.bind(this, function(req)
@@ -70,8 +72,7 @@
 				mxResources.getSpecialBundle(RESOURCE_BASE, mxLanguage);
 
 			// Fixes possible asynchronous requests
-			mxUtils.getAll([bundle, STYLE_PATH + '/default.xml'], function(xhr)
-			{
+			mxUtils.getAll([bundle, STYLE_PATH + '/default.xml'], function(xhr) {
 				// Adds bundle text to resources
 				mxResources.parse(xhr[0].getText());
 
@@ -80,11 +81,25 @@
 				themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement();
 
 				// Main
-				new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
-			}, function()
-			{
+				editorUI = new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
+				console.log('edit');
+				window.addEventListener("message", (e) => {
+					var data= e.data;
+					if(data.type == 'view') {
+						var xml = data.view;
+						try {
+							var doc = mxUtils.parseXml(xml);
+							editorUI.graph.setSelectionCells(editor.graph.importGraphModel(doc.documentElement));
+						} catch (e) {
+							mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
+						}
+					}
+				});
+
+			}, function() {
 				document.body.innerHTML = '<center style="margin-top:10%;">Error loading resource files. Please check browser console.</center>';
 			});
+
 		})();
 	</script>
 </body>

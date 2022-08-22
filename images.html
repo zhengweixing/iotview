@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>图片选择</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<script type="text/javascript" src="lib/jquery/jquery.js"></script>
+<script type="text/javascript">
+
+    function load_images() {
+        var type = $('#typeSel').val();
+        $.get("/images/" + type + "/map.txt",function(data, status){
+            if(status == 'success'){
+                var arr = data.split(/[(\r\n)\r\n]+/);
+                var html = '';
+                $.each(arr, function(idx, path){
+                    if(path != '') {
+                        html += '<img class="img-box" src="/images/' + type + '/' + path + '"/>'
+                    }
+                })
+                if(html == ''){
+                    $('#imgBox').html('<div id="emptyBox">暂无图片</div>');
+                }else{
+                    $('#imgBox').html(html);
+                }
+            }
+        });
+    }
+
+    $(function(){
+
+        $('.img-box').click(function(){
+            var path = $(this).attr("src");
+            $('#iptImg').val(path)
+        });
+
+        $('#typeSel').change(function(){
+            $('#iptImg').val('');
+            load_images();
+        });
+
+        $('#selBtn').click(function(){
+            var path = $('#iptImg').val();
+            window.parent.openFile.cancel(path);
+        });
+
+        var arr = [
+            {'id':'bg', 'title':'大屏'},
+            {'id':'device', 'title':'设备'}
+         ];
+
+         var html = '';
+         $.each(arr, function(id, item){
+             html += '<option value="'+ item.id +'">'+ item.title +'</option>'
+         });
+         console.log(111);
+         $('#typeSel').html(html);
+        load_images();
+
+    });
+
+</script>
+<style type="text/css">
+    body {
+        padding:0px;
+        margin: 0px;
+    }
+
+    #mainBox {
+        border:1px solid silver;
+        margin-top:10px;
+        height: 400px;
+        overflow: scroll;
+        padding:17px;
+    }
+
+    .img-box {
+        float: left;
+        width: 80px;
+        height: 80px;
+        margin: 10px;
+        border: 1px solid silver;
+    }
+
+    .img-box:hover {
+        border: 1px solid blue;
+    }
+
+    #emptyBox{
+        padding: 100px;
+        text-align: center;
+        color: silver;
+        font-size: xx-large;
+    }
+
+</style>
+<body>
+<div>
+    <div id="hdbOX">
+        <h4 style="padding:0px 0px 18px 0px;margin: 0px;">图片选择</h4>
+        <span>分类</span>
+        <select id="typeSel" style="width:100px; height: 25px;text-align: center;">
+        </select>
+        <input style="height: 21px; width: 60%;" id="iptImg" value="">
+        <button id="selBtn">确认</button>
+    </div>
+    <div id="mainBox">
+        <div id="imgBox"></div>
+        <br style="clear: both;"/>
+    </div>
+</div>
+</body>
+</html>
