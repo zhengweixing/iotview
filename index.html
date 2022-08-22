@@ -82,20 +82,22 @@
 
 				// Main
 				editorUI = new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
-				console.log('edit');
+				var editor = editorUI.editor;
 				window.addEventListener("message", (e) => {
-					var data= e.data;
+					var data = e.data;
+					console.log('message', e.data);
+					data = JSON.parse(data);
 					if(data.type == 'view') {
 						var xml = data.view;
 						try {
 							var doc = mxUtils.parseXml(xml);
-							editorUI.graph.setSelectionCells(editor.graph.importGraphModel(doc.documentElement));
+							editor.graph.setSelectionCells(editor.graph.importGraphModel(doc.documentElement));
 						} catch (e) {
 							mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
 						}
 					}
 				});
-
+				window.parent.postMessage({ type : 'view', event : 'done' }, "*");
 			}, function() {
 				document.body.innerHTML = '<center style="margin-top:10%;">Error loading resource files. Please check browser console.</center>';
 			});

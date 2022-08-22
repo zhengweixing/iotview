@@ -72,12 +72,15 @@
     };
 
     window.addEventListener("message", (e) => {
-        var data= e.data;
+        var data = e.data;
+        console.log('message', e.data);
+        data = JSON.parse(data);
         if(data.type == 'view') {
              var view = data.view;
              show(data);
         }
     });
+    window.parent.postMessage({ type : 'view', event : 'done' }, "*");
 </script>
 </body>
 </html>
