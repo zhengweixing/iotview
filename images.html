@@ -3,7 +3,6 @@
 <head>
     <title>图片选择</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-</head>
 <script type="text/javascript" src="lib/jquery/jquery.js"></script>
 <script type="text/javascript">
 
@@ -29,7 +28,7 @@
 
     $(function(){
 
-        $('.img-box').click(function(){
+        $(document).on('click', '.img-box', function(){
             var path = $(this).attr("src");
             $('#iptImg').val(path)
         });
@@ -94,6 +93,7 @@
     }
 
 </style>
+</head>
 <body>
 <div>
     <div id="hdbOX">
