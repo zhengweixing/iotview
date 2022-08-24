@@ -87,7 +87,7 @@
 					var data = e.data;
 					console.log('message', e.data);
 					data = JSON.parse(data);
-					if(data.type == 'view') {
+					if(data.type == 'view' && data.view) {
 						var xml = data.view;
 						try {
 							var doc = mxUtils.parseXml(xml);
@@ -95,6 +95,9 @@
 						} catch (e) {
 							mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
 						}
+					} else if(data.type == 'view' && data.event == 'get'){
+						var view = mxUtils.getPrettyXml(editor.getGraphXml());
+                        window.parent.postMessage({ type : 'view', view : view }, "*");
 					}
 				});
 				window.parent.postMessage({ type : 'view', event : 'done' }, "*");
