@@ -21,37 +21,29 @@
     <link rel="stylesheet" type="text/css" href="css/main.css">
 
     <style type="text/css">
-        html,body{
-            height: 100%;
-        }
         body{
             margin: 0;
-        }
-        #graphContainer {
-            overflow: visible;
-            cursor: default;
+            background-color:#757474;
         }
         #mainBox{
-            display:inline-block;
+            display: flex;
+            position:absolute;
+            top:0px;bottom:0px;
+            width:100%;
+        }
+        #graphContainer{
+            margin: auto;
+            background-color:white;
         }
     </style>
 
 </head>
-<body class="geEditor" onload="main(document.getElementById('graphContainer'))">
-<div id="mainBox" >
-    <div style="display:none;" id="import">
-        Input:
-        <br/>
-        <textarea rows="24" cols="100" id="textarea" placeholder="mxGraphModel"></textarea>
-        <br/>
-        <button onclick="show(document.getElementById('textarea').value);return false;">Show</button>
-    </div>
-    <div id="graphContainer"></div>
+<body onload="main(document.getElementById('graphContainer'))">
+<div id="mainBox">
+    <div id="graphContainer" style=""></div>
 </div>
 <script type="text/javascript">
-
     function show(data) {
-        console.log(data)
         var xmlDoc = mxUtils.parseXml(data);
         var codec = new mxCodec(xmlDoc);
         var model = graph.getModel();
@@ -66,8 +58,6 @@
         var xml = urlParams.xml;
         if(xml){
             show(Base64.decode(xml))
-        }else{
-            // document.getElementById('import').style.display="block";
         }
     };
 
