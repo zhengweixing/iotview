@@ -40,14 +40,20 @@
 </head>
 <body onload="main(document.getElementById('graphContainer'))">
 <div id="mainBox">
-    <div id="graphContainer" style=""></div>
+    <div id="graphContainer"></div>
 </div>
 <script type="text/javascript">
-    function show(data) {
-        var xmlDoc = mxUtils.parseXml(data);
+    var graph;
+
+    function show(container, xmlDoc){
         var codec = new mxCodec(xmlDoc);
         var model = graph.getModel();
         codec.decode(xmlDoc.documentElement, model);
+        var style  = "width:" + model.pageWidth + "px;";
+            style += "height:" + model.pageHeight + "px;";
+            style += "background:" + model.backgroundImage + " no-repeat top;";
+            style += "background-size:" + model.pageWidth + "px " + model.pageHeight + "px;"
+        container.style = style;
     }
 
     function main(container) {
@@ -57,13 +63,14 @@
         graph.setEnabled(false);
         var xml = urlParams.xml;
         if(xml){
-            show(Base64.decode(xml))
+            var data = Base64.decode(xml);
+            var xmlDoc = mxUtils.parseXml(data);
+            show(container, xmlDoc);
         }
     };
 
     window.addEventListener("message", (e) => {
         var data = e.data;
-        console.log('message', e.data);
         data = JSON.parse(data);
         if(data.type == 'view') {
              var view = data.view;
