@@ -221,6 +221,7 @@ EditorUi.prototype.showBackgroundImageDialog = function(apply)
             var img = new Image();
             var editor = this.editor;
             img.onload = function() {
+                console.log('set background image');
                 var width = editor.graph.pageFormat.width;
                 var height = editor.graph.pageFormat.height;
                 apply(new mxImage(newValue, width, height));
