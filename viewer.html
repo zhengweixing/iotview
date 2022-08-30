@@ -38,14 +38,15 @@
     </style>
 
 </head>
-<body onload="main(document.getElementById('graphContainer'))">
+<body onload="main()">
 <div id="mainBox">
     <div id="graphContainer"></div>
 </div>
 <script type="text/javascript">
-    var graph;
+    var graph, container;
 
-    function show(container, xmlDoc){
+    function show(container, data){
+        var xmlDoc = mxUtils.parseXml(data);
         var codec = new mxCodec(xmlDoc);
         var model = graph.getModel();
         codec.decode(xmlDoc.documentElement, model);
@@ -56,7 +57,8 @@
         container.style = style;
     }
 
-    function main(container) {
+    function main() {
+        container = document.getElementById('graphContainer');
         graph = new Graph(container);
         graph.isView = true;//设置为浏览模式
         graph.resizeContainer = true;
@@ -64,8 +66,7 @@
         var xml = urlParams.xml;
         if(xml){
             var data = Base64.decode(xml);
-            var xmlDoc = mxUtils.parseXml(data);
-            show(container, xmlDoc);
+            show(container, data);
         }
     };
 
@@ -73,8 +74,8 @@
         var data = e.data;
         data = JSON.parse(data);
         if(data.type == 'view') {
-             var view = data.view;
-             show(view);
+             var data = data.view;
+             show(container, data);
         }
     });
     window.parent.postMessage({ type : 'view', event : 'done' }, "*");
