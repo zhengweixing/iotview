@@ -46,14 +46,17 @@
     var graph, container;
 
     function show(container, data){
+        console.log('viewer show');
         var xmlDoc = mxUtils.parseXml(data);
         var codec = new mxCodec(xmlDoc);
         var model = graph.getModel();
         codec.decode(xmlDoc.documentElement, model);
         var style  = "width:" + model.pageWidth + "px;";
             style += "height:" + model.pageHeight + "px;";
-            style += "background:" + model.backgroundImage + " no-repeat top;";
+        if(model.backgroundImage) {
+            style += "background:url(" + model.backgroundImage + ") no-repeat top;";
             style += "background-size:" + model.pageWidth + "px " + model.pageHeight + "px;"
+        }
         container.style = style;
     }
 

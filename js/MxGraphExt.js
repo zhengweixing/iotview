@@ -210,17 +210,10 @@ EditorUi.prototype.showImageDialog = function(title, value, fn, ignoreExisting)
 EditorUi.prototype.showBackgroundImageDialog = function(apply)
 {
     apply = (apply != null) ? apply : mxUtils.bind(this, function(image) {
-
-        // var canvas = this.editor.graph.view.canvas;
-        // if (canvas.ownerSVGElement != null) {
-        //     canvas = canvas.ownerSVGElement;
-        // }
-        // canvas.style.backgroundImage = 'url(/images/bg/0.jpeg)';
-
+        console.log('showBackgroundImageDialog');
         var change = new ChangePageSetup(this, null, image);
         change.ignoreColor = true;
         this.editor.graph.model.execute(change);
-
     });
     var ui = this;
     window.openFile = new OpenFile(mxUtils.bind(this, function (newValue) {

@@ -5,16 +5,17 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script type="text/javascript" src="lib/jquery/jquery.js"></script>
 <script type="text/javascript">
-
+    var dir = '/upload';
     function load_images() {
         var type = $('#typeSel').val();
-        $.get("/images/" + type + "/map.txt",function(data, status){
+        var path = dir + "/" + type + "/map.txt";
+        $.get(path, function(data, status){
             if(status == 'success'){
                 var arr = data.split(/[(\r\n)\r\n]+/);
                 var html = '';
                 $.each(arr, function(idx, path){
                     if(path != '') {
-                        html += '<img class="img-box" src="/images/' + type + '/' + path + '"/>'
+                        html += '<img class="img-box" src="' + dir + '/' + type + '/' + path + '"/>'
                     }
                 })
                 if(html == ''){

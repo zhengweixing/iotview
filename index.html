@@ -44,6 +44,26 @@
 			var editorUI;
 			var editorUiInit = EditorUi.prototype.init;
 
+			function update_editor(data){
+				console.log('update_editor');
+				var editor = editorUI.editor;
+				var xmlDoc = mxUtils.parseXml(data);
+				var codec = new mxCodec(xmlDoc);
+				var model = editor.graph.getModel();
+				codec.decode(xmlDoc.documentElement, model);
+
+				var change;
+				var format = new mxRectangle(0, 0, model.pageWidth, model.pageHeight);
+				if(model.backgroundImage){
+					var image = new mxImage(model.backgroundImage, model.pageWidth, model.pageHeight);
+					change = new ChangePageSetup(editorUI, null, image, format);
+					change.ignoreColor = true;
+				}else{
+					change = new ChangePageSetup(editorUI, null, null, format);
+				}
+				editor.graph.model.execute(change);
+			}
+
 			EditorUi.prototype.init = function() {
 				editorUiInit.apply(this, arguments);
 				this.actions.get('export').setEnabled(false);
@@ -84,13 +104,12 @@
 				var editor = editorUI.editor;
 				window.addEventListener("message", (e) => {
 					var data = e.data;
-					console.log('message', e.data);
+					console.log('message', 'export view');
 					data = JSON.parse(data);
 					if(data.type == 'view' && data.view) {
 						var xml = data.view;
 						try {
-							var doc = mxUtils.parseXml(xml);
-							editor.graph.setSelectionCells(editor.graph.importGraphModel(doc.documentElement));
+							update_editor(xml);
 						} catch (e) {
 							mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
 						}
