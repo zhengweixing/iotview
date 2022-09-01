@@ -53,18 +53,20 @@
         codec.decode(xmlDoc.documentElement, model);
         var style  = "width:" + model.pageWidth + "px;";
             style += "height:" + model.pageHeight + "px;";
-        if(model.backgroundImage) {
-            style += "background:url(" + model.backgroundImage + ") no-repeat top;";
-            style += "background-size:" + model.pageWidth + "px " + model.pageHeight + "px;"
-        }
         container.style = style;
+
+        if(model.backgroundImage) {
+            var image = new mxImage(model.backgroundImage, model.pageWidth, model.pageHeight);
+            graph.setBackgroundImage(image);
+            graph.view.validateBackground();
+        }
     }
 
     function main() {
         container = document.getElementById('graphContainer');
         graph = new Graph(container);
         graph.isView = true;//设置为浏览模式
-        graph.resizeContainer = true;
+        // graph.resizeContainer = true;
         graph.setEnabled(false);
         var xml = urlParams.xml;
         if(xml){
