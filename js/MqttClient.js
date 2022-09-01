@@ -52,6 +52,7 @@ MqttClient.prototype.connect = function () {
         _reconnect();
     };
     this.client.onMessageArrived = function (message) {
+        console.log('Topic:' + message.topic, message.payloadString);
         self.onMessageArrived(message)
     };
     var options = this.options;

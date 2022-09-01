@@ -46,7 +46,6 @@ Date.prototype.format = function (fmt) {
 // 消息格式化函数
 var doFormat = function (Message){
     var msg = JSON.parse(Message.payloadString);
-    console.log(msg);
     return msg;
 }
 
