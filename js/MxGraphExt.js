@@ -170,7 +170,7 @@ TextFormatPanel.prototype.init = function () {
     }
     window.onshow = function(){
         var height = iframe.contentWindow.document.documentElement.scrollHeight;
-        iframe.height = height == 0 ? 600 : height;
+        iframe.height = height == 0 ? 1000 : height;
     }
     container.appendChild(iframe);
 }

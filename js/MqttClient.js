@@ -45,7 +45,7 @@ MqttClient.prototype.connect = function () {
             }
         }, 5000);
     }
-    
+
     this.client = new Paho.Client(this.host, this.port, this.clientId);
     this.client.onConnectionLost = function (responseObject) {
         !_reconnecting && self.onConnectionLost(responseObject);
@@ -73,12 +73,10 @@ MqttClient.prototype.disconnect = function () {
 }
 
 MqttClient.prototype.publish = function (topic, payload, qos, retain) {
-
     if (!this.connected()) {
         console.log(this.clientId + " Not connected");
         return false;
     }
-
     var message = new Messaging.Message(payload);
     message.destinationName = topic;
     message.qos = qos;
@@ -86,19 +84,22 @@ MqttClient.prototype.publish = function (topic, payload, qos, retain) {
     this.client.send(message);
 }
 
-MqttClient.prototype.subscribe = function (topic, qosNr) {
-
+MqttClient.prototype.subscribe = function (topic, qos) {
     if (!this.connected()) {
         console.log(this.clientId + " Not connected");
         return false;
     }
-
-    if (topic.length < 1) {
+    var topics = topic.split("\n");
+    if (topics.length < 1) {
         console.log(this.clientId + " Topic cannot be empty");
         return false;
     }
-
-    this.client.subscribe(topic, {qos: qosNr});
+    for(var i = 0; i < topics.length; i++){
+        topic = topics[i];
+        if(topic !== ''){
+            this.client.subscribe(topic, {qos: qos});
+        }
+    }
     return true;
 }
 
@@ -115,7 +116,6 @@ MqttClient.prototype.onFail = function (message) {
 }
 
 MqttClient.prototype.onConnectionLost = function (responseObject) {
-
     if (responseObject.errorCode !== 0) {
         console.log("onConnectionLost:" + responseObject.errorMessage);
     }

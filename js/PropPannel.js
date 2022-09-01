@@ -252,7 +252,7 @@ BasePropView.prototype.onSubmit = function () {
                         var state = self.graph.view.getState(cell);
                         var id = mxUtils.getValue(state.style, mxConstants.STYLE_ID, null);
                         if (id && id == value) {
-                            throw 'ID ' + value + ' is duplicate!'
+                            throw 'ID ' + value + '重复了!'
                         }
                     }
                 });
@@ -290,7 +290,7 @@ MqttPropView.prototype.initProp = function () {
                 new inputProp(mxConstants.STYLE_MQTT_TIMEOUT, "超时", {default: "10"}),
                 new checkBoxProp(mxConstants.STYLE_MQTT_SSL, "SSL", {default: "false"}),
                 new checkBoxProp(mxConstants.STYLE_MQTT_SESSION, "清除会话", {default: "true"}),
-                new inputProp(mxConstants.STYLE_MQTT_TOPICS, "订阅主题", {})
+                new textareaProp(mxConstants.STYLE_MQTT_TOPICS, "订阅主题", {})
             ]
         },
         {
