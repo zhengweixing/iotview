@@ -18,6 +18,5 @@
 
 ## 体验地址
 
-- http://view.ashufa.com
-- http://iot.ashufa.com
-- 微信/手机 18668485606
+- http://www.uzyiot.com
+- http://view.uzyiot.com
