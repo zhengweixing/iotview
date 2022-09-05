@@ -33,7 +33,6 @@
         }
         #graphContainer{
             margin: auto;
-            background-color:white;
         }
     </style>
 
@@ -44,7 +43,6 @@
 </div>
 <script type="text/javascript">
     var graph, container;
-
     function show(container, data){
         console.log('viewer show');
         var xmlDoc = mxUtils.parseXml(data);
@@ -53,21 +51,75 @@
         codec.decode(xmlDoc.documentElement, model);
         var style  = "width:" + model.pageWidth + "px;";
             style += "height:" + model.pageHeight + "px;";
-        container.style = style;
-
-        if(model.backgroundImage) {
-            var image = new mxImage(model.backgroundImage, model.pageWidth, model.pageHeight);
-            graph.setBackgroundImage(image);
-            graph.view.validateBackground();
+        if(typeof(model.backgroundImage)=="undefined") {
+            style += "background:white url(/images/grid.gif)";
+        }else{
+            style += "background:white url("+model.backgroundImage+")";
+            // var image = new mxImage(model.backgroundImage, model.pageWidth, model.pageHeight);
         }
+        container.style = style;
+        // graph.pageVisible = true;
+        // graph.pageFormat = new mxRectangle(0, 0, model.pageWidth, model.pageHeight);
+        graph.setBackgroundImage(image);
+        graph.view.validateBackground();
+        // addZoomBtn();
+    }
+
+    function addZoomBtn() {
+        var buttons = document.createElement('div');
+        buttons.style.position = 'absolute';
+        buttons.style.overflow = 'visible';
+        var left = 0;
+        var bw = 16;
+        var bh = 16;
+        buttons.style.bottom = 24 + 'px';
+        buttons.style.right = bw + bw + 'px';
+        if (mxClient.IS_QUIRKS)
+        {
+            bw -= 1;
+            bh -= 1;
+        }
+        function addButton(label, funct) {
+            var btn = document.createElement('div');
+            mxUtils.write(btn, label);
+            btn.style.position = 'absolute';
+            btn.style.backgroundColor = 'transparent';
+            btn.style.border = '1px solid gray';
+            btn.style.textAlign = 'center';
+            btn.style.fontSize = '10px';
+            btn.style.cursor = 'pointer';
+            btn.style.width = bw + 'px';
+            btn.style.height = bh + 'px';
+            btn.style.left = left + 'px';
+            btn.style.top = '0px';
+            mxEvent.addListener(btn, 'click', function(evt)
+            {
+                funct();
+                mxEvent.consume(evt);
+            });
+
+            left += bw;
+            buttons.appendChild(btn);
+        };
+        addButton('+', function()
+        {
+            graph.zoomIn();
+        });
+        addButton('-', function()
+        {
+            graph.zoomOut();
+        });
+        container.appendChild(buttons);
     }
 
     function main() {
         container = document.getElementById('graphContainer');
         graph = new Graph(container);
-        graph.isView = true;//设置为浏览模式
-        // graph.resizeContainer = true;
+        graph.centerZoom = false;
+        graph.resizeContainer = false;
+        graph.setTooltips(false);
         graph.setEnabled(false);
+        graph.isView = true;//设置为浏览模式
         var xml = urlParams.xml;
         if(xml){
             var data = Base64.decode(xml);

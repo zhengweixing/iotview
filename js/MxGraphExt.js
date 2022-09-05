@@ -211,7 +211,8 @@ EditorUi.prototype.showBackgroundImageDialog = function(apply)
 {
     apply = (apply != null) ? apply : mxUtils.bind(this, function(image) {
         console.log('showBackgroundImageDialog');
-        var change = new ChangePageSetup(this, null, image);
+        var format = new mxRectangle(0, 0, image.width, image.height);
+        var change = new ChangePageSetup(this, null, image, format);
         change.ignoreColor = true;
         this.editor.graph.model.execute(change);
     });
@@ -220,12 +221,8 @@ EditorUi.prototype.showBackgroundImageDialog = function(apply)
         ui.hideDialog();
         if (newValue != null && newValue.length > 0) {
             var img = new Image();
-            var editor = this.editor;
             img.onload = function() {
-                console.log('set background image');
-                var width = editor.graph.pageFormat.width;
-                var height = editor.graph.pageFormat.height;
-                apply(new mxImage(newValue, width, height));
+                apply(new mxImage(newValue, img.width, img.height));
             };
             img.onerror = function() {
                 apply(null);
