@@ -124,7 +124,7 @@ selectProp.prototype = Object.create(baseProp.prototype);
 
 
 selectProp.prototype.create = function (div, value, title, opts) {
-    var items = opts.items;
+    var items = opts.items ? opts.items : [];
     var html =
         '<div class="input-box ' + opts.className + '">' +
         '  <div class="input-span">' + title + '</div>' +
@@ -327,16 +327,22 @@ propRender.register('default', ShapePropView);
 
 
 ShapePropView.prototype.initProp = function () {
-    var dataSource = [{title: 'NONE', value: ''}];
+    var dataSource = [{title: 'NONE', value: '', topics: []}];
     var Graph = this.graph;
     loopCell(Graph, function (cell) {
         var state = Graph.view.getState(cell);
         var id = mxUtils.getValue(state.style, mxConstants.STYLE_ID, null);
         if (id && state.shape.type == 'dataSource') {
-            dataSource.push({
-                title: '[' + state.style.shape.toUpperCase() + '] ' + id,
+            var ShapeType = state.style.shape.toUpperCase();
+            console.log('111111');
+            var item = {
+                title: '[' + ShapeType + '] ' + id,
                 value: id
-            });
+            };
+            if (ShapeType == 'MQTT'){
+                item.topics = state.style.topics.split("\n");
+            }
+            dataSource.push(item);
         }
     });
     this.props = [
@@ -345,6 +351,7 @@ ShapePropView.prototype.initProp = function () {
             help: "dataSource",
             items: [
                 new selectProp(mxConstants.STYLE_DATASOURCE, "适配器", {items: dataSource}),
+                new selectProp(mxConstants.STYLE_TOPIC, "Topic", {items: dataSource.topics}),
                 new textareaProp(mxConstants.STYLE_ONMSGARRIVED, "消息处理", 10, {
                     type: "base64",
                     default: doMsg.toString()

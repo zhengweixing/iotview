@@ -20,6 +20,7 @@ mxConstants.STYLE_MQTT_OFFIMG = "off_img";
 
 mxConstants.STYLE_FORMAT = "format";
 mxConstants.STYLE_DATASOURCE = "dataSource";
+mxConstants.STYLE_TOPIC = "dataTopic";
 mxConstants.STYLE_TIMER_FREQ = "freq";
 
 mxConstants.STYLE_ECHART_SCRIPT = "script";
