@@ -55,11 +55,11 @@ Sidebar.prototype.addExtShapes = function () {
     ];
     this.addPaletteFunctions('extShapes', '扩展图形', false, fns);
 
-    var style = 'html=1;image=lib/grapheditor/stencils/clipart/Gear_128x128.png;fontColor=none;align=center;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;';
+    var style = ';fontColor=none;align=center;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;';
     var fns = [
-        this.createVertexTemplateEntry('shape=timer;' + style, this.defaultImageWidth, this.defaultImageHeight, 'Timer', "Timer Adapter", true, null, null),
-        this.createVertexTemplateEntry('shape=mqtt;' + style, this.defaultImageWidth, this.defaultImageHeight, 'MQTT', "MQTT Adapter", true, null, null),
-        this.createVertexTemplateEntry('shape=http;' + style, this.defaultImageWidth, this.defaultImageHeight, 'HTTP', "HTTP Adapter", true, null, null)
+        this.createVertexTemplateEntry('shape=timer;html=1;image=images/TIMER.png' + style, 35, 35, '', "Timer", true, null, null),
+        this.createVertexTemplateEntry('shape=mqtt;html=1;image=images/MQTT.png' + style, 35, 35, '', "MQTT", true, null, null),
+        this.createVertexTemplateEntry('shape=http;html=1;image=images/HTTP.png' + style, 35, 35, '', "HTTP", true, null, null)
     ];
     this.addPaletteFunctions('Adapter', '数据适配器', false, fns);
 }
@@ -123,6 +123,11 @@ Actions.prototype.init = function () {
         graph.openLink('viewer.html?xml=' + Base64.encode(view));
     });
 
+    this.addAction('export', function () {
+        var view = mxUtils.getPrettyXml(editor.getGraphXml());
+        graph.openLink('viewer.html?xml=' + Base64.encode(view));
+    });
+
     this.put('about', new Action(mxResources.get('about'), function () {
         ui.showDialog(new OpenDialog2(RESOURCES_PATH + "/about_" + mxClient.language + ".html").container, 350, 300, true, true, function () {
         }, undefined, undefined, undefined, true);
@@ -145,7 +150,7 @@ Menus.prototype.oldInit = Menus.prototype.init;
 Menus.prototype.init = function () {
     this.oldInit();
     this.put('file', new Menu(mxUtils.bind(this, function (menu, parent) {
-        this.addMenuItems(menu, ['preview', '-', 'publish', '-', 'import', 'export'], parent);
+        this.addMenuItems(menu, ['preview', '-', 'publish', '-', 'import', 'saveAs'], parent);
     })));
 }
 
@@ -153,26 +158,52 @@ Menus.prototype.init = function () {
 // 扩展format
 TextFormatPanel.prototype.parentInit = TextFormatPanel.prototype.init
 TextFormatPanel.prototype.init = function () {
-
     this.parentInit();
     var ui = this.editorUi;
     var editor = ui.editor;
     var graph = editor.graph;
     var container = this.container;
 
-    var iframe = document.createElement('iframe');
-    iframe.src = 'bind.html';
-    iframe.style.borderWidth = '0px';
-    iframe.scrolling = 'no';
-    window.graph = graph;
-    window.setData = function (cells) {
-        console.log(cells);
-    }
-    window.onshow = function(){
-        var height = iframe.contentWindow.document.documentElement.scrollHeight;
-        iframe.height = height == 0 ? 1000 : height;
-    }
-    container.appendChild(iframe);
+    var box = document.createElement('div');
+    box.id = 'propBox';
+    var prop = propRender.init(box, graph);
+
+    var btnBox = document.createElement('div');
+    btnBox.style = "text-align: center;padding:5px;";
+
+    var title = mxResources.get('advanced');
+    title = title ? title : 'Advanced';
+    var adBox = mxUtils.button(title, mxUtils.bind(this, function (evt) {
+        window.graph = graph;
+        window.cell = prop.cell;
+        var state = graph.view.getState(prop.cell);
+        window.shapeType = state.style.shape.toUpperCase();
+        window.openFile = new OpenFile(mxUtils.bind(this, function () {
+            ui.hideDialog();
+        }));
+        window.openFile.setConsumer(mxUtils.bind(this, function (cells) {
+            console.log(cells);
+        }));
+        var href = "bind.html?type=" + window.shapeType;
+        ui.showDialog(new OpenDialog2(href).container, 850, 478, true, true, function () {
+            window.openFile = null;
+            window.graph = null;
+        }, undefined, undefined, undefined, true);
+    }));
+    adBox.setAttribute('class', 'geBtn');
+    adBox.style = "width:97%;display: block;margin:5px;";
+    btnBox.appendChild(adBox);
+
+    var title = window.mxResources.get('apply');
+    var subBtn = mxUtils.button(title, mxUtils.bind(this, function (evt) {
+        prop.onSubmit();
+    }));
+    subBtn.style = "width:97%;display: block;margin:5px;";
+    subBtn.setAttribute('class', 'geBtn gePrimaryBtn');
+    btnBox.appendChild(subBtn);
+
+    box.appendChild(btnBox);
+    container.appendChild(box);
 }
 
 EditorUi.prototype.showImageDialog = function(title, value, fn, ignoreExisting)

@@ -35,7 +35,6 @@ function baseProp(id, title, opts) {
         if (!value) {
             value = opts.default;
         }
-
         this.create(div, value, title, opts);
         container.appendChild(div);
     }
@@ -115,7 +114,6 @@ textareaProp.prototype.create = function (div, value, title, opts) {
 
 
 //select
-
 function selectProp(id, title, opts) {
     baseProp.call(this, id, title, opts);
 }
@@ -140,9 +138,7 @@ selectProp.prototype.create = function (div, value, title, opts) {
     div.innerHTML = html;
 }
 
-
 // 属性展示面板渲染器
-
 var propRender = {
 
     views: new Object(),
@@ -150,38 +146,27 @@ var propRender = {
         this.views[Type] = Class;
     },
 
-    getPropView: function (graph, cell) {
-        var container = document.getElementById('propBox');
+    getPropView: function (container, graph, cell) {
         var state = graph.view.getState(cell);
         var PropView = this.views[state.style.shape];
         if (!PropView) {
             PropView = this.views['default'];
         }
-        return new PropView(container, graph, cell);
+        var propView = new PropView(container, graph, cell);
+        propView.cell = cell;
+        return propView;
     },
 
-    init: function (graph) {
-        var form = document.getElementById('propForm');
+    init: function (container, graph) {
         var cells = graph.getSelectionCells();
         if (cells != null && cells.length > 0) {
             var cell = cells[0];
-            var prop = this.getPropView(graph, cell);
-            form.onsubmit = function () {
-                try {
-                    prop.onSubmit();
-                    window.parent.setData(cell);
-                    return true;
-                } catch (Err) {
-                    mxUtils.alert("Error: " + Err);
-                    return false
-                }
-            }
+            return this.getPropView(container, graph, cell);
         }
     }
 }
 
 // 属性展示面板
-
 function BasePropView(container, graph, cell) {
     this.graph = graph;
     this.state = graph.view.getState(cell);
@@ -206,7 +191,6 @@ function BasePropView(container, graph, cell) {
         var prop = this.props[i];
         var subtitle = document.createElement("div");
         subtitle.className = "subtitle";
-        console.log(prop);
         if (prop.help) {
             subtitle.innerHTML = prop.title + '<span class="glyphicon glyphicon-search"></span><a href="/resources/help_zh.html#' + prop.help + '" target="_blank"  class="help_link">?</a>';
         } else{
@@ -236,30 +220,19 @@ BasePropView.prototype.save = function (id, value, cells) {
 }
 
 BasePropView.prototype.onSubmit = function () {
+    var arr = [];
     for (var i = 0; i < this.props.length; i++) {
         var props = this.props[i];
         for (var j = 0; j < props.items.length; j++) {
             var prop = props.items[j];
-            var value = prop.submit();
-            var cells = this.graph.getSelectionCells();
-
-            // 对于选择多个cell，设置ID时，只能设置最后一个
-            if (prop.id == mxConstants.STYLE_ID && value && value.length > 0) {
-                var self = this;
-                var currentCell = cells[cells.length - 1];
-                loopCell(self.graph, function (cell) {
-                    if (cell.id != currentCell.id) {
-                        var state = self.graph.view.getState(cell);
-                        var id = mxUtils.getValue(state.style, mxConstants.STYLE_ID, null);
-                        if (id && id == value) {
-                            throw 'ID ' + value + '重复了!'
-                        }
-                    }
-                });
-                cells = [currentCell];
-            }
-            this.save(prop.id, value, cells);
+            prop.value = prop.submit();
+            arr.push(prop);
         }
+    }
+    var cells = this.graph.getSelectionCells();
+    for(var i = 0; i < arr.length; i++){
+        var prop = arr[i];
+        this.save(prop.id, prop.value, cells);
     }
 }
 
@@ -289,29 +262,29 @@ MqttPropView.prototype.initProp = function () {
                 new inputProp(mxConstants.STYLE_MQTT_KEEPALIVE, "心跳", {default: "60"}),
                 new inputProp(mxConstants.STYLE_MQTT_TIMEOUT, "超时", {default: "10"}),
                 new checkBoxProp(mxConstants.STYLE_MQTT_SSL, "SSL", {default: "false"}),
-                new checkBoxProp(mxConstants.STYLE_MQTT_SESSION, "清除会话", {default: "true"}),
-                new textareaProp(mxConstants.STYLE_MQTT_TOPICS, "订阅主题", {})
+                new checkBoxProp(mxConstants.STYLE_MQTT_SESSION, "清除会话", {default: "true"})
+                // new textareaProp(mxConstants.STYLE_MQTT_TOPICS, "订阅主题", 5,{})
             ]
         },
         {
-            title: "连接/断开状态",
+            title: "连接状态",
             help: "status",
             items: [
-                new checkBoxProp(mxConstants.STYLE_VISIBLE, "是否可见", {default: "true"}),
-                new inputProp(mxConstants.STYLE_MQTT_OFFIMG, "未连接", {default: "shapes/1/20.png"}),
-                new inputProp(mxConstants.STYLE_MQTT_ONIMG, "已连接", {default: "shapes/1/14.png"})
-            ]
-        },
-        {
-            title: "事件",
-            help: "doFormat",
-            items: [
-                new textareaProp(mxConstants.STYLE_FORMAT, "消息格式化", 10, {
-                    type: "base64",
-                    default: doFormat.toString()
-                })
+                new checkBoxProp(mxConstants.STYLE_VISIBLE, "是否显示", {default: "true"}),
+                new inputProp(mxConstants.STYLE_MQTT_OFFIMG, "断开", {default: "shapes/1/20.png"}),
+                new inputProp(mxConstants.STYLE_MQTT_ONIMG, "连接", {default: "shapes/1/14.png"})
             ]
         }
+        // {
+        //     title: "消息格式化",
+        //     help: "doFormat",
+        //     items: [
+        //         new textareaProp(mxConstants.STYLE_FORMAT, "处理函数", 10, {
+        //             type: "base64",
+        //             default: doFormat.toString()
+        //         })
+        //     ]
+        // }
     ];
 }
 
@@ -334,13 +307,13 @@ ShapePropView.prototype.initProp = function () {
         var id = mxUtils.getValue(state.style, mxConstants.STYLE_ID, null);
         if (id && state.shape.type == 'dataSource') {
             var ShapeType = state.style.shape.toUpperCase();
-            console.log('111111');
             var item = {
                 title: '[' + ShapeType + '] ' + id,
                 value: id
             };
             if (ShapeType == 'MQTT'){
-                item.topics = state.style.topics.split("\n");
+                var topics = state.style.topics ? state.style.topics : '';
+                item.topics = topics.split("\n");
             }
             dataSource.push(item);
         }
@@ -350,16 +323,15 @@ ShapePropView.prototype.initProp = function () {
             title: "数据绑定",
             help: "dataSource",
             items: [
-                new selectProp(mxConstants.STYLE_DATASOURCE, "适配器", {items: dataSource}),
-                new selectProp(mxConstants.STYLE_TOPIC, "Topic", {items: dataSource.topics}),
-                new textareaProp(mxConstants.STYLE_ONMSGARRIVED, "消息处理", 10, {
-                    type: "base64",
-                    default: doMsg.toString()
-                }),
-                new textareaProp(mxConstants.STYLE_ONCLICK, "单击事件", 10, {
-                    type: "base64",
-                    default: doClick.toString()
-                })
+                new selectProp(mxConstants.STYLE_DATASOURCE, "适配器", {items: dataSource})
+                // new textareaProp(mxConstants.STYLE_ONMSGARRIVED, "消息处理", 10, {
+                //     type: "base64",
+                //     default: doMsg.toString()
+                // }),
+                // new textareaProp(mxConstants.STYLE_ONCLICK, "单击事件", 10, {
+                //     type: "base64",
+                //     default: doClick.toString()
+                // })
             ]
         }
     ];
@@ -385,7 +357,7 @@ TimerPropView.prototype.initProp = function () {
             title: "高级配置",
             help: "timer",
             items: [
-                new checkBoxProp(mxConstants.STYLE_VISIBLE, "是否可见", { default: "true"}),
+                new checkBoxProp(mxConstants.STYLE_VISIBLE, "是否显示", { default: "true"}),
                 new inputProp(mxConstants.STYLE_TIMER_FREQ, "周期", { default: "1000"})
             ]
         }
@@ -415,11 +387,11 @@ echartPropView.prototype.initProp = function () {
             title: "EChart配置",
             help: "echart/script",
             items: [
-                new checkBoxProp(mxConstants.STYLE_ECHART_GL, "是否引入GL", {default: "false"}),
-                new textareaProp(mxConstants.STYLE_ECHART_SCRIPT, "脚本", 10, {
-                    type: "base64",
-                    default: getEChart()
-                })
+                new checkBoxProp(mxConstants.STYLE_ECHART_GL, "引入GL", {default: "false"})
+                // new textareaProp(mxConstants.STYLE_ECHART_SCRIPT, "脚本", 10, {
+                //     type: "base64",
+                //     default: getEChart()
+                // })
             ]
         }
     ]);

@@ -1,0 +1,88 @@
+#propBox {
+    padding: 5px;
+}
+
+.subtitle {
+    margin: 8px 0px 0px 0px;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+textarea {
+    width: 100%;
+    height: 100%;
+}
+
+.code {
+    border: 1px solid silver;
+    padding: 5px;
+}
+
+.geBtn {
+    /*display: block;*/
+    /*width:96%;*/
+    /*margin: 5px;*/
+    /*padding: 0px;*/
+}
+
+.gePrimaryBtn {
+    /*background-color: #337ab7;*/
+    /*color: white;*/
+}
+
+.input-box {
+    /*border: 1px solid silver;*/
+    /*border-top-width: 0px;*/
+    display: inline-block;
+    width: 100%;
+}
+
+.input-box-0 {
+    border-top: 1px solid silver;
+}
+
+.input-span {
+    display: inline-block;
+    width: 20%;
+    padding-left: 5px;
+    /*border-right: 1px solid silver;*/
+}
+
+.input-row {
+}
+
+.input-box input, .input-box select {
+    width: 73%;
+    height: 25px;
+    display: inline-block;
+    border-width: 1px;
+    margin-top: 10px;
+}
+
+.input-box .input-check {
+    height: 16px;
+    margin: 12px 0px 12px 0px;
+    width: 20px;
+}
+
+.input-row input:focus, .input-row select:focus {
+    outline: none;
+    font-weight: bold;
+}
+
+.help_link {
+    font-weight: bolder;
+    margin: 5px;
+    color: #4279bd;
+}
+
+body {
+    margin: 0px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+#mainBox {
+    color: rgb(112, 112, 112);
+    padding: 0px 8px 0px 8px;
+}

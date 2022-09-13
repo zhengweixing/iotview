@@ -3,7 +3,7 @@ mxConstants.STYLE_ID = "id";
 mxConstants.STYLE_VISIBLE = 'visible';
 
 mxConstants.STYLE_ONMSGARRIVED = "doMsg";
-mxConstants.STYLE_ONCLICK = "onclick";
+mxConstants.STYLE_ONCLICK = "onClick";
 
 mxConstants.STYLE_MQTT_HOST = "host";
 mxConstants.STYLE_MQTT_PORT = "port";
@@ -44,35 +44,26 @@ Date.prototype.format = function (fmt) {
     return fmt;
 }
 
-// 消息格式化函数
-var doFormat = function (Message){
-    var msg = JSON.parse(Message.payloadString);
-    return msg;
-}
 
-// 消息处理函数
-var doMsg = function(Message){
-    if(Message.id == this.id){
-        this.setValue(Message.value);
+var defaultCode = {
+    'doFormat': function (Message) {
+        var msg = JSON.parse(Message.payloadString);
+        return msg;
+    },
+    'doMsg': function (Message) {
+        if (Message.id == this.id) {
+            this.setValue(Message.value);
+            this.refresh();
+        }
+    },
+    'doTimer': function (timer) {
+        this.setValue(new Date().format("yyyy-MM-dd HH:mm:ss"));
         this.refresh();
+    },
+    'onClick': function (event) {
+        console.log(this.id, event);
+    },
+    'getEChart': function () {
+        return '//参考echart示例：https://echarts.apache.org/examples/zh/index.html\r\n' + 'option = [];\r\n' + 'this.chart.setOption(option);';
     }
-}
-
-// 定时器消息处理函数
-var doTimer = function (timer) {
-    this.setValue(new Date().format("yyyy-MM-dd HH:mm:ss"));
-    this.refresh();
-}
-
-// 单击事件
-var doClick = function (event) {
-    console.log(this.id, event);
-}
-
-
-// echart脚本
-var getEChart = function () {
-    return '//参考echart示例：https://echarts.apache.org/examples/zh/index.html\r\n' +
-           'option = [];\r\n' +
-           'this.chart.setOption(option);';
-}
+};

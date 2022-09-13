@@ -34,7 +34,6 @@ mxCellRenderer.registerShape('animLine', animLine);
 
 animLine.prototype.paintEdgeShape = function (c, pts) {
 
-    console.log('line');
     mxPolyline.prototype.paintEdgeShape.apply(this, arguments);
 
     var path0 = this.node.getElementsByTagName('path')[0];
@@ -217,7 +216,6 @@ function mqttAdapter(graph, cell) {
     ];
     var self = this;
     getScript(scripts, function () {
-
         var host = self.getStyle(mxConstants.STYLE_MQTT_HOST, null);
         var port = self.getStyle(mxConstants.STYLE_MQTT_PORT, null);
         if (host && port) {
@@ -229,7 +227,7 @@ function mqttAdapter(graph, cell) {
                 userName: self.getStyle(mxConstants.STYLE_MQTT_USERNAME, ""),
                 password: self.getStyle(mxConstants.STYLE_MQTT_PASSWORD, "")
             };
-            var id = self.id.length > 0 ? self.id : new Date().getTime();
+            var id = new Date().getTime() + '_' + self.id;
             self.client = new MqttClient(id.toString(), host, port, options);
 
             self.client.onConnect = function () {
@@ -263,7 +261,7 @@ mqttAdapter.prototype.onConnect = function () {
     if (this.visible && Path) {
         this.setStyle(mxConstants.STYLE_IMAGE, Path);
     }
-    var topics = this.getStyle(mxConstants.STYLE_MQTT_TOPICS, "").split(',');
+    var topics = Base64.decode(this.getStyle(mxConstants.STYLE_MQTT_TOPICS, "")).split(',');
     var subs = [];
     for (var i = 0; i < topics.length; i++) {
         var topic = topics[i];

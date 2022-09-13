@@ -3,117 +3,119 @@
 <head>
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="lib/grapheditor/styles/grapheditor.css">
+    <script type="text/javascript" src="lib/jquery/jquery.js"></script>
+    <script type="text/javascript" src="lib/grapheditor/deflate/base64.js"></script>
+    <script type="text/javascript" src="js/Init.js"></script>
+    <script type="text/javascript" src="lib/mxgraph/src/js/mxClient.js"></script>
+    <script type="text/javascript" src="js/App.js"></script>
+    <script type="text/javascript">
+        function hideWindow() {
+            window.parent.openFile.cancel(true);
+        }
+        function insert(id){
+            var code = defaultCode[id].toString();
+            $('#' + id).val(code);
+        }
+        function main() {
+            var graph = window.parent.graph;
+            var type = window.parent.shapeType;
+            switch (type){
+                case 'MQTT':
+                case 'HTTP':
+                    var id = type + "Box";
+                    $("#"+id).css("display", "block");
+                    break;
+                default:
+                    $("#OTHERBox").css("display", "block");
+                    break;
+            }
+
+            var cell = window.parent.cell;
+            var props = $('.prop');
+            props.each(function(i, item){
+                var styleId = item.id;
+                var state = graph.view.getState(cell);
+                var val = mxUtils.getValue(state.style, styleId, '');
+                $('#' + styleId).val(Base64.decode(val));
+            });
+            $('#applyBtn').click(function(){
+                props.each(function(i, item){
+                    var styleId = item.id;
+                    if(!$(item).is(":hidden")){
+                        var val = $('#' + styleId).val();
+                        val = Base64.encode(val);
+                        graph.setCellStyles(styleId, val, [cell]);
+                    }
+                });
+                hideWindow(true);
+            });
+        }
+    </script>
+    <style type="text/css">
+        body{
+            margin: 0px;
+        }
+       .box {
+           display: none;
+       }
+       .titleBox {
+           margin: 10px 0px;
+           font-size: 20px;
+           font-weight: bolder;
+       }
+        .footer{
+            height: 30px;
+            width: 100%;
+            background-color: #f5f5f5;
+            position: fixed;
+            bottom: 0;
+            padding: 10px;
+        }
+        .insertBtn {
+            font-size: small;
+            padding: 10px;
+            color: blue;
+        }
+
+    </style>
 </head>
-<script type="text/javascript" src="lib/grapheditor/deflate/base64.js"></script>
-<script type="text/javascript" src="js/Init.js"></script>
-<script type="text/javascript" src="lib/mxgraph/src/js/mxClient.js"></script>
-
-<script type="text/javascript" src="js/App.js"></script>
-<script type="text/javascript" src="js/PropPannel.js"></script>
-
-
-<script type="text/javascript">
-
-    function main() {
-        var openButton = document.getElementById('button');
-        openButton.value = window.parent.mxResources.get('apply');
-        var graph = window.parent.graph;
-        propRender.init(graph);
-        window.parent.onshow();
-    };
-</script>
-<style type="text/css">
-
-    .subtitle {
-        margin: 8px 0px;
-        font-weight: 700;
-        font-size: 15px;
-    }
-
-    textarea {
-        width: 100%;
-        height: 100%;
-    }
-
-    .code {
-        border: 1px solid silver;
-        padding: 5px;
-    }
-
-    .geBtn {
-        padding: 5px 15px;
-        margin-top: 5px;
-    }
-
-    .gePrimaryBtn {
-        border: 1px solid silver;
-        background-color: #337ab7;
-        color: white;
-    }
-
-    .input-box {
-        border: 1px solid silver;
-        border-top-width: 0px;
-        display: inline-block;
-        width: 100%;
-    }
-
-    .input-box-0 {
-        border-top: 1px solid silver;
-    }
-
-    .input-span {
-        display: inline-block;
-        width: 20%;
-        padding-left: 5px;
-        border-right: 1px solid silver;
-    }
-
-    .input-box input, .input-box select {
-        width: 73%;
-        height:35px;
-        display: inline-block;
-        border-width: 0px;
-    }
-
-    .input-box .input-check {
-        height: 16px;
-        margin: 12px 0px 12px 0px;
-        width: 20px;
-    }
-
-    .input-row input:focus, .input-row select:focus {
-        outline: none;
-        font-weight: bold;
-    }
-
-    .help_link {
-        font-weight: bolder;
-        margin: 5px;
-        color: #4279bd;
-    }
-    body {
-        margin:0px;
-        font-weight:bold;
-        font-size:12px;
-    }
-    #mainBox{
-        color: rgb(112, 112, 112);
-        padding:0px 8px 0px 8px;
-    }
-
-</style>
-<body onload="main();" >
+<body onload="main();">
 <div id="mainBox">
-    <form method="POST" action="" id="propForm">
-        <div id="propBox" class="row propBox">
-
+    <div style="padding:10px 30px 10px 10px;border-bottom: 1px solid silver;">
+        <div style="display:inline-block;font-weight:bolder;font-size: 25px;">高级设置</div>
+    </div>
+    <div style="padding:20px 20px 50px 20px">
+        <div id="MQTTBox" class="box">
+            <div>
+                <div><span class="titleBox">订阅主题</span></div>
+                <textarea class="prop" id="topics" cols="5" rows="10" style="width:100%"></textarea>
+            </div>
+            <div>
+                <div><span class="titleBox">格式化</span><a class = "insertBtn" onclick="insert('doFormat')">插入模板</a></div>
+                <textarea class="prop" id="doFormat" cols="5" rows="10" style="width:100%"></textarea>
+            </div>
         </div>
-        <div>
-            <input type="submit" id="button" class="geBtn gePrimaryBtn" value="Apply">
-            <br style="clear:both;"/>
+        <div id="OTHERBox" class="box">
+            <div>
+                <div><span class="titleBox">消息处理</span><a class = "insertBtn" onclick="insert('doMsg')">插入模板</a></div>
+                <textarea class="prop" id="doMsg" cols="5" rows="10" style="width:100%"></textarea>
+            </div>
         </div>
-    </form>
+        <div id="baseBox">
+            <div>
+                <div><span class="titleBox">单击事件</span><a class = "insertBtn" onclick="insert('onClick')">插入模板</a></div>
+                <textarea class="prop" id="onClick" cols="5" rows="10" style="width:100%"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    <div style="float:right;padding-right:25px;">
+        <input type="button" id="cancel" class="geBtn" value="取消" onclick="hideWindow();">
+        <input type="submit" id="applyBtn" class="geBtn gePrimaryBtn" value="应用">
+    </div>
 </div>
 </body>
 </html>

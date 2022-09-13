@@ -9,7 +9,7 @@ IMAGE_PATH = 'lib/grapheditor/images';
 mxLoadResources = false;
 OPEN_URL = '/view/open';
 EXPORT_URL = '/view/export';
-SAVE_URL = '/view/save';
+SAVE_URL = '';
 OPEN_FORM = 'lib/grapheditor/open.html';
 RESOURCES_PATH = "resources";
 

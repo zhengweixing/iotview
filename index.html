@@ -26,11 +26,13 @@
 	<script type="text/javascript" src="lib/grapheditor/js/Dialogs.js"></script>
 
     <script type="text/javascript" src="js/App.js"></script>
+	<script type="text/javascript" src="js/PropPannel.js"></script>
 	<script type="text/javascript" src="js/MyShapes.js"></script>
 	<script type="text/javascript" src="js/EChartShapes.js"></script>
 	<script type="text/javascript" src="js/MxGraphExt.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/bind.css">
     <style type="text/css">
 
 	</style>
@@ -68,8 +70,8 @@
 				editorUiInit.apply(this, arguments);
 				this.actions.get('export').setEnabled(false);
 
+				Editor.useLocalStorage = true;
 				// Updates action states which require a backend
-
 				if (!Editor.useLocalStorage)
 				{
 					mxUtils.post(OPEN_URL, '', mxUtils.bind(this, function(req)
@@ -78,7 +80,7 @@
 						this.actions.get('open').setEnabled(enabled || Graph.fileSupport);
 						this.actions.get('import').setEnabled(enabled || Graph.fileSupport);
 						this.actions.get('save').setEnabled(enabled);
-						this.actions.get('saveAs').setEnabled(enabled);
+						// this.actions.get('saveAs').setEnabled(enabled);
 						this.actions.get('export').setEnabled(enabled);
 					}));
 				}
@@ -103,19 +105,16 @@
 				editorUI = new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
 				var editor = editorUI.editor;
 				window.addEventListener("message", (e) => {
-					var data = e.data;
-					console.log('message', 'export view');
-					data = JSON.parse(data);
-					if(data.type == 'view' && data.view) {
-						var xml = data.view;
-						try {
+					try {
+						var data = e.data;
+						console.log('message', 'export view');
+						// data = JSON.parse(data);
+						if(data.type == 'view' && data.view) {
+							var xml = data.view;
 							update_editor(xml);
-						} catch (e) {
-							mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
 						}
-					} else if(data.type == 'view' && data.event == 'get'){
-						var view = mxUtils.getPrettyXml(editor.getGraphXml());
-                        window.parent.postMessage({ type : 'view', view : view }, "*");
+					} catch (e) {
+						mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
 					}
 				});
 				window.parent.postMessage({ type : 'view', event : 'done' }, "*");
