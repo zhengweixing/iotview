@@ -129,7 +129,6 @@
 
     window.addEventListener("message", (e) => {
         var data = e.data;
-        data = JSON.parse(data);
         if(data.type == 'view') {
              var data = data.view;
              show(container, data);
