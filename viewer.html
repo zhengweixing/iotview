@@ -30,16 +30,18 @@
             position:absolute;
             top:0px;
             bottom:0px;
+            width: 100%;
         }
         #graphContainer{
-            margin: auto;
         }
     </style>
 
 </head>
 <body onload="main()">
 <div id="mainBox">
-    <div id="graphContainer"></div>
+    <div style="margin: auto;">
+        <div id="graphContainer"></div>
+    </div>
 </div>
 <script type="text/javascript">
     var graph, container;
@@ -60,7 +62,7 @@
         container.style = style;
         // graph.pageVisible = true;
         // graph.pageFormat = new mxRectangle(0, 0, model.pageWidth, model.pageHeight);
-        graph.setBackgroundImage(image);
+        // graph.setBackgroundImage(image);
         graph.view.validateBackground();
         // addZoomBtn();
     }
@@ -129,7 +131,7 @@
 
     window.addEventListener("message", (e) => {
         var data = e.data;
-        if(data.type == 'view') {
+        if(data.type == 'view' && data.view) {
              var data = data.view;
              show(container, data);
         }
