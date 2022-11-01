@@ -18,7 +18,7 @@ mxConstants.STYLE_MQTT_PASSWORD = "password";
 mxConstants.STYLE_MQTT_ONIMG = "on_img";
 mxConstants.STYLE_MQTT_OFFIMG = "off_img";
 
-mxConstants.STYLE_FORMAT = "format";
+mxConstants.STYLE_FORMAT = "doFormat";
 mxConstants.STYLE_DATASOURCE = "dataSource";
 mxConstants.STYLE_TOPIC = "dataTopic";
 mxConstants.STYLE_TIMER_FREQ = "freq";
