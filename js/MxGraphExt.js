@@ -58,8 +58,8 @@ Sidebar.prototype.addExtShapes = function () {
     var style = ';fontColor=none;align=center;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;';
     var fns = [
         this.createVertexTemplateEntry('shape=timer;html=1;image=images/TIMER.png' + style, 35, 35, '', "Timer", true, null, null),
-        this.createVertexTemplateEntry('shape=mqtt;html=1;image=images/MQTT.png' + style, 35, 35, '', "MQTT", true, null, null),
-        this.createVertexTemplateEntry('shape=http;html=1;image=images/HTTP.png' + style, 35, 35, '', "HTTP", true, null, null)
+        this.createVertexTemplateEntry('shape=mqtt;html=1;image=images/MQTT.png' + style, 35, 35, '', "MQTT", true, null, null)
+        // this.createVertexTemplateEntry('shape=http;html=1;image=images/HTTP.png' + style, 35, 35, '', "HTTP", true, null, null)
     ];
     this.addPaletteFunctions('Adapter', '数据适配器', false, fns);
 }
@@ -119,8 +119,14 @@ Actions.prototype.init = function () {
     var editor = ui.editor;
     var graph = editor.graph;
     this.addAction('preview', function () {
-        var view = mxUtils.getPrettyXml(editor.getGraphXml());
-        graph.openLink('viewer.html?xml=' + Base64.encode(view));
+        // var view = mxUtils.getPrettyXml(editor.getGraphXml());
+        // graph.openLink('viewer.html?xml=' + Base64.encode(view));
+        try{
+            var view = mxUtils.getPrettyXml(editor.getGraphXml());
+            sendMessage({  event: 'preview', view : view })
+        }catch(err){
+            alert(err);
+        }
     });
 
     this.addAction('export', function () {
@@ -134,10 +140,9 @@ Actions.prototype.init = function () {
     }));
 
     this.put('publish', new Action(mxResources.get('publish'), function () {
-        console.log('publish');
         try{
             var view = mxUtils.getPrettyXml(editor.getGraphXml());
-            window.parent.postMessage({ type : 'view', view : view }, "*");
+            sendMessage({  event: 'publish', view : view })
         }catch(err){
             alert(err);
         }
@@ -171,7 +176,17 @@ TextFormatPanel.prototype.init = function () {
     var btnBox = document.createElement('div');
     btnBox.style = "text-align: center;padding:5px;";
 
-    var title = mxResources.get('advanced');
+    var title = mxResources.get('bind');
+    title = title ? title : 'Bind';
+    var bindBtn = mxUtils.button(title, mxUtils.bind(this, function(){
+        sendMessage({ event : 'bind', callback: 'bind_data' })
+    }));
+    bindBtn.setAttribute('class', 'geBtn');
+    bindBtn.style = "width:97%;display: block;margin:5px;";
+    btnBox.appendChild(bindBtn);
+
+
+    title = mxResources.get('advanced');
     title = title ? title : 'Advanced';
     var adBox = mxUtils.button(title, mxUtils.bind(this, function (evt) {
         window.graph = graph;

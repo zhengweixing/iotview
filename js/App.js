@@ -67,3 +67,50 @@ var defaultCode = {
         return '//参考echart示例：https://echarts.apache.org/examples/zh/index.html\r\n' + 'option = [];\r\n' + 'this.chart.setOption(option);';
     }
 };
+
+// 消息机制
+var callback = {
+    editorUI: undefined,
+    update_editor: function(data){
+        var editorUI = callback.editorUI;
+        var xml = data.view;
+        var editor = editorUI.editor;
+        var xmlDoc = mxUtils.parseXml(xml);
+        var codec = new mxCodec(xmlDoc);
+        var model = editor.graph.getModel();
+        codec.decode(xmlDoc.documentElement, model);
+        var change;
+        var format = new mxRectangle(0, 0, model.pageWidth, model.pageHeight);
+        if(model.backgroundImage){
+            var image = new mxImage(model.backgroundImage, model.pageWidth, model.pageHeight);
+            change = new ChangePageSetup(editorUI, null, image, format);
+            change.ignoreColor = true;
+        }else{
+            change = new ChangePageSetup(editorUI, null, null, format);
+        }
+        editor.graph.model.execute(change);
+    },
+    bind_data: function(data){
+        console.log(data);
+    }
+};
+
+var sendMessage = function(msg){
+   var message = msg;
+   message.from = 'scene';
+   window.parent.postMessage(message, "*");
+}
+
+
+var handleEvent = function(editorUI, data){
+    try {
+        if(data.from == 'iot') {
+            callback.editorUI = editorUI;
+            var action = data.callback;
+            var Fun = callback[action];
+            Fun(data);
+        }
+    } catch (e) {
+        mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
+    }
+}

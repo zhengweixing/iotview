@@ -325,3 +325,4 @@ zoomOut=缩小
 Preview=预览
 dataSource=数据源
 publish=发布
+bind=绑定变量

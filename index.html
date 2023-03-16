@@ -41,30 +41,31 @@
 <body class="geEditor">
 	<script type="text/javascript">
 
+		console.log('11111');
+
 		// Extends EditorUi to update I/O action states based on availability of backend
 		(function() {
-			var editorUI;
 			var editorUiInit = EditorUi.prototype.init;
 
-			function update_editor(data){
-				console.log('update_editor');
-				var editor = editorUI.editor;
-				var xmlDoc = mxUtils.parseXml(data);
-				var codec = new mxCodec(xmlDoc);
-				var model = editor.graph.getModel();
-				codec.decode(xmlDoc.documentElement, model);
-
-				var change;
-				var format = new mxRectangle(0, 0, model.pageWidth, model.pageHeight);
-				if(model.backgroundImage){
-					var image = new mxImage(model.backgroundImage, model.pageWidth, model.pageHeight);
-					change = new ChangePageSetup(editorUI, null, image, format);
-					change.ignoreColor = true;
-				}else{
-					change = new ChangePageSetup(editorUI, null, null, format);
-				}
-				editor.graph.model.execute(change);
-			}
+			// function update_editor(data){
+			// 	console.log('update_editor');
+			// 	var editor = editorUI.editor;
+			// 	var xmlDoc = mxUtils.parseXml(data);
+			// 	var codec = new mxCodec(xmlDoc);
+			// 	var model = editor.graph.getModel();
+			// 	codec.decode(xmlDoc.documentElement, model);
+			//
+			// 	var change;
+			// 	var format = new mxRectangle(0, 0, model.pageWidth, model.pageHeight);
+			// 	if(model.backgroundImage){
+			// 		var image = new mxImage(model.backgroundImage, model.pageWidth, model.pageHeight);
+			// 		change = new ChangePageSetup(editorUI, null, image, format);
+			// 		change.ignoreColor = true;
+			// 	}else{
+			// 		change = new ChangePageSetup(editorUI, null, null, format);
+			// 	}
+			// 	editor.graph.model.execute(change);
+			// }
 
 			EditorUi.prototype.init = function() {
 				editorUiInit.apply(this, arguments);
@@ -102,22 +103,11 @@
 				themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement();
 
 				// Main
-				editorUI = new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
-				var editor = editorUI.editor;
+				var editorUI = new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
 				window.addEventListener("message", (e) => {
-					try {
-						var data = e.data;
-						console.log('message', 'export view');
-						// data = JSON.parse(data);
-						if(data.type == 'view' && data.view) {
-							var xml = data.view;
-							update_editor(xml);
-						}
-					} catch (e) {
-						mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
-					}
+					handleEvent(editorUI, e.data)
 				});
-				window.parent.postMessage({ type : 'view', event : 'done' }, "*");
+				sendMessage({ event : 'done', callback : 'update_editor' });
 			}, function() {
 				document.body.innerHTML = '<center style="margin-top:10%;">Error loading resource files. Please check browser console.</center>';
 			});

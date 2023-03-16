@@ -44,7 +44,7 @@
 </div>
 <script type="text/javascript">
     var graph, container;
-    function show(container, data){
+    function update_editor(container, data){
         console.log('viewer show');
         var xmlDoc = mxUtils.parseXml(data);
         var codec = new mxCodec(xmlDoc);
@@ -124,18 +124,20 @@
         var xml = urlParams.xml;
         if(xml){
             var data = Base64.decode(xml);
-            show(container, data);
+            update_editor(container, data);
         }
     };
 
     window.addEventListener("message", (e) => {
         var data = e.data;
-        if(data.type == 'view' && data.view) {
-             var data = data.view;
-             show(container, data);
+        if(data.from == 'iot' && data.event == 'update') {
+            var view = data.view;
+            update_editor(container, view);
+        } else if(data.from == 'iot' && data.event == 'update_data') {
+            console.log(data);
         }
     });
-    window.parent.postMessage({ type : 'view', event : 'done' }, "*");
+    sendMessage({ event: 'done', callback: 'update_editor' });
 </script>
 </body>
 </html>
